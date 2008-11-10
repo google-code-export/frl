@@ -1,0 +1,31 @@
+#ifndef psoi2_device_manager_h_
+#define psoi2_device_manager_h_
+#include "poor_xml/frl_poor_xml_document.h"
+#include <boost/noncopyable.hpp>
+#include "frl_opc.h"
+#include <vector>
+
+using namespace frl;
+class Psoi2Device;
+
+namespace psoi2util
+{
+	void setServerInfo( opc::DAServer &toServer );
+	void regServer();
+	void unregServer();
+}
+
+class DeviceManager : private boost::noncopyable
+{
+private:
+	void initializeAddressSpace();
+	void initializeDAServer();
+	opc::DAServer *server;
+	poor_xml::Document config;
+	std::vector< Psoi2Device* > devices;
+public:
+	DeviceManager();
+	~DeviceManager();
+};
+
+#endif // psoi2_device_manager_h_
