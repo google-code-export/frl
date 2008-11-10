@@ -4,58 +4,59 @@
 #include "psoi2_device.h"
 #include <WinCon.h>
 
-int main( int argc, char *argv[] )
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd )
 {
-	if( argc >= 2 )
+	frl::String cmd_line = frl::unicodeCompatibility( lpCmdLine );
+	if( cmd_line.length() )
 	{
 		using namespace frl::console_std;
-		if( std::string( "-r" ) == std::string( argv[1] ) )
+		if( frl::String( FRL_STR("-r") ) == cmd_line )
 		{
 			try
 			{
 				psoi2util::regServer();
-				ColorOut( foregroundColor::iGreen )
-				<< "Registration success!" << std::endl;
+				MessageBox( NULL, L"Registration success!", L"Registration message", MB_OK | MB_ICONINFORMATION );
 			}
-			catch( std::exception &ex )
+			catch( frl::Exception &ex )
 			{
-				ColorOut( foregroundColor::iRed )
-				<< "Registration fail! " << std::endl;
-				ColorOut( foregroundColor::iDefault )
-				<< ex.what() << std::endl;
+				frl::String msg = FRL_STR("Registration fail!\n");
+				msg += ex.getFullDescription();
+				MessageBox( NULL, msg.c_str(), L"Registration message", MB_OK | MB_ICONSTOP );
 			}
-			exit( 0 );
+			catch( ... )
+			{
+				MessageBox( NULL, L"Registration fail!\nUnknown error", L"Registration message", MB_OK | MB_ICONSTOP );
+			}
+			return 0;
 		}
 
-		if( std::string("-u") == std::string( argv[1] ) )
+		if( frl::String( FRL_STR("-u") ) == cmd_line )
 		{
 			try
 			{
 				psoi2util::unregServer();
-				ColorOut( foregroundColor::iGreen )
-					<< "Removing registration success!" << std::endl;
+				MessageBox( NULL, L"Removing registration success!", L"Registration message", MB_OK | MB_ICONINFORMATION );
 			}
-			catch( std::exception &ex )
+			catch( frl::Exception &ex )
 			{
-				ColorOut( foregroundColor::iRed )
-					<< "Unregistration fail! " << std::endl;
-				ColorOut( foregroundColor::iDefault )
-					<< ex.what() << std::endl;
+				frl::String msg = FRL_STR("Unregistration fail!\n");
+				msg += ex.getFullDescription();
+				MessageBox( NULL, msg.c_str(), L"Registration message", MB_OK | MB_ICONSTOP );
 			}
-			exit( 0 );
+			catch( ... )
+			{
+				MessageBox( NULL, L"Unregistration fail!\nUnknown error", L"Registration message", MB_OK | MB_ICONSTOP );
+			}
+			return 0;
 		}
 
-		if( std::string("-Embedding") != std::string( argv[1] ) )
+		if( frl::String( FRL_STR("-Embedding") ) != cmd_line )
 		{
-			ColorOut( foregroundColor::iGreen )
-				<< "Available parameters:" << std::endl;
-			ColorOut( foregroundColor::iDefault ) << "-r";
-			ColorOut( foregroundColor::onDefault )
-				<< " - registration server." << std::endl;
-			ColorOut( foregroundColor::iDefault ) << "-u";
-			ColorOut( foregroundColor::onDefault )
-				<< " - Unregistration server." << std::endl;
-			exit( 0 );
+			MessageBox( NULL,
+								L"Available parameters:\n\"-r\" - Registration server.\n\"-u\"- Unregistration server.",
+								L"Registration message",
+								MB_OK | MB_ICONHAND );
+			return 0;
 		}
 	}
 	
