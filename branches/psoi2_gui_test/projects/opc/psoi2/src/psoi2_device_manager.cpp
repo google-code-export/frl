@@ -89,6 +89,21 @@ void DeviceManager::initializeDAServer()
 	server->init();
 }
 
+const std::vector< Psoi2Device* >& DeviceManager::getDevices()
+{
+	return devices;
+}
+
+const Psoi2Device* DeviceManager::getDevice( frl::UInt port_number )
+{
+	for( std::vector< Psoi2Device* >::iterator it = devices.begin(); it != devices.end(); ++it )
+	{
+		if( (*it)->getPortNumber() == port_number )
+			return (*it);
+	}
+	return NULL;
+}
+
 namespace psoi2util
 {
 	void regServer()

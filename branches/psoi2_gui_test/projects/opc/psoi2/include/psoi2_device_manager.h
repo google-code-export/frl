@@ -26,6 +26,8 @@ private:
 public:
 	DeviceManager();
 	~DeviceManager();
+	const std::vector< Psoi2Device* >& getDevices();
+	const Psoi2Device* getDevice( frl::UInt port_number );
 };
 
 #endif // psoi2_device_manager_h_
