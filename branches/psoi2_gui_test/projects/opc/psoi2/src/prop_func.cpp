@@ -4,22 +4,22 @@
 #include "prop_func.h"
 #include "resource.h"
 
-BOOL CALLBACK PropFunc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK propFunc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
 	switch( message )
 	{ 	 
 		case WM_INITDIALOG: 
 		{
 			HTREEITEM Selected = (HTREEITEM)lParam;
-			std::map< HTREEITEM, global::ChannelDescr >::iterator it = global::channels_map::getInstance().find( Selected );
-			if( it == global::channels_map::getInstance().end() )
+			std::map< HTREEITEM, ChannelDescr >::iterator it = global_var::channels_map.find( Selected );
+			if( it == global_var::channels_map.end() )
 			{
 				MessageBox( hWnd, FRL_STR("Channel not found!"), FRL_STR("PSOI2 OPC server: Channel property"), MB_OK | MB_ICONSTOP );
 				EndDialog( hWnd,0 );
 				return 0;
 			}
 
-			const Psoi2Device* dev = global::devManager::getInstance().getDevice( (*it).second.portNumber );
+			const Psoi2Device* dev = global_var::devManager::getInstance().getDevice( (*it).second.portNumber );
 			frl::UInt channel_number = (*it).second.channelNumber;
 			
 			frl::String tmp = FRL_STR("Channel #");

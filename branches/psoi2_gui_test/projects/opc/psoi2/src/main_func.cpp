@@ -27,15 +27,15 @@ void systrayIcon( HINSTANCE hinstance, HWND hwnd, bool add )
 }
 
 
-BOOL RegClass( HINSTANCE hInstance )
+BOOL regClass( HINSTANCE hInstance )
 {
 	WNDCLASS wc;
 	wc.hbrBackground	= (HBRUSH)( COLOR_WINDOW );
 	wc.cbClsExtra = wc.cbWndExtra = 0;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = MainFunc;
+	wc.lpfnWndProc = mainFunc;
 	wc.hInstance = hInstance;
-	wc.lpszClassName = global::main_class_name;
+	wc.lpszClassName = global_var::main_wnd::class_name;
 	wc.lpszMenuName = NULL;
 	wc.hIcon = LoadIcon( hInstance, (LPCTSTR)IDI_ICON_MAIN );
 	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
@@ -48,46 +48,46 @@ BOOL createWindow()
 	int y_screen = ::GetSystemMetrics( SM_CYSCREEN );
 	y_screen = y_screen - ::GetSystemMetrics( SM_CYMENU );
 
-	x_screen = x_screen - global::main_width - 10;
-	y_screen = y_screen - global::main_height - 10;
+	x_screen = x_screen - global_var::main_wnd::width - 10;
+	y_screen = y_screen - global_var::main_wnd::height - 10;
 
-	global::main_hwnd = CreateWindow( 
-		global::main_class_name, 
-		global::main_window_title,
+	global_var::main_wnd::handle = CreateWindow( 
+		global_var::main_wnd::class_name, 
+		global_var::main_wnd::title,
 		WS_VISIBLE | WS_MINIMIZEBOX | WS_SYSMENU | WS_CAPTION,
 		x_screen,
 		y_screen,
-		global::main_width,
-		global::main_height,
+		global_var::main_wnd::width,
+		global_var::main_wnd::height,
 		NULL,
 		NULL,
-		global::main_hinstance,
+		global_var::main_wnd::h_instance,
 		NULL );
 
-	if( ! global::main_hwnd )
+	if( ! global_var::main_wnd::handle )
 		return FALSE;
 
 	return TRUE;
 }
 
-BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
+BOOL initInstance( HINSTANCE hInstance, int nCmdShow )
 {
-	global::main_hinstance = hInstance;
+	global_var::main_wnd::h_instance = hInstance;
 
 	if( ! createWindow() )
 		return FALSE;
 
-	::ShowWindow( global::main_hwnd, nCmdShow );
+	::ShowWindow( global_var::main_wnd::handle, nCmdShow );
 
 	if( nCmdShow == SW_HIDE )
-		systrayIcon( global::main_hinstance, global::main_hwnd, true );
+		systrayIcon( global_var::main_wnd::h_instance, global_var::main_wnd::handle, true );
 	else
-		::UpdateWindow( global::main_hwnd );
+		::UpdateWindow( global_var::main_wnd::handle );
 
 	return TRUE;
 }
 
-LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
+LRESULT CALLBACK mainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 {
 	switch( msg )
 	{
@@ -95,7 +95,7 @@ LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 		{
 			if( w_param == SIZE_MINIMIZED )
 			{
-				systrayIcon( global::main_hinstance, hwnd, true );
+				systrayIcon( global_var::main_wnd::h_instance, hwnd, true );
 				ShowWindow( hwnd, SW_HIDE );
 			}
 		}
@@ -105,7 +105,7 @@ LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 		{
 			if( l_param ==  WM_LBUTTONDBLCLK )
 			{
-				systrayIcon( global::main_hinstance, hwnd, false );
+				systrayIcon( global_var::main_wnd::h_instance, hwnd, false );
 				ShowWindow( hwnd, SW_RESTORE );
 				SetForegroundWindow( hwnd );
 			}
@@ -116,8 +116,8 @@ LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 		{
 			InitCommonControls();
 
-			global::tree_hwnd = CreateWindowEx( 
-				NULL,
+			global_var::main_wnd::tree_handle = CreateWindowEx( 
+				WS_EX_WINDOWEDGE,
 				WC_TREEVIEW,
 				NULL,
 				WS_CHILD+WS_VISIBLE+TVS_HASLINES+TVS_HASBUTTONS+TVS_LINESATROOT,
@@ -126,16 +126,16 @@ LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 				410, 
 				hwnd,
 				(HMENU)ID_MAIN_TREE,
-				global::main_hinstance, NULL); // Создание tree view
+				global_var::main_wnd::h_instance, NULL); // Создание tree view
 
 			HIMAGELIST hImageList=ImageList_Create( 16,16,ILC_COLOR24,3, 10 );
-			HBITMAP hBitMap=LoadBitmap( global::main_hinstance, MAKEINTRESOURCE(IDB_TREE_LIST) );
+			HBITMAP hBitMap=LoadBitmap( global_var::main_wnd::h_instance, MAKEINTRESOURCE(IDB_TREE_LIST) );
 			ImageList_Add(hImageList,hBitMap,NULL);
 			DeleteObject(hBitMap);
 			SendDlgItemMessage( hwnd,ID_MAIN_TREE,TVM_SETIMAGELIST,0,(LPARAM)hImageList);
 
-			std::vector< Psoi2Device* >::const_iterator end = global::devManager::getInstance().getDevices().end();
-			std::vector< Psoi2Device* >::const_iterator it = global::devManager::getInstance().getDevices().begin();
+			std::vector< Psoi2Device* >::const_iterator end = global_var::devManager::getInstance().getDevices().end();
+			std::vector< Psoi2Device* >::const_iterator it = global_var::devManager::getInstance().getDevices().begin();
 
 			// temporary variables
 			TV_INSERTSTRUCT tv_struct;
@@ -173,7 +173,7 @@ LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 					tv_struct.item.iImage=2;
 					tv_struct.item.iSelectedImage=1;
 					item_handle = (HTREEITEM)SendDlgItemMessage( hwnd, ID_MAIN_TREE, TVM_INSERTITEM,0,(LPARAM)&tv_struct);
-					global::channels_map::getInstance().insert( std::make_pair( item_handle,global::ChannelDescr( (*it)->getPortNumber(), i ) ) );
+					global_var::channels_map.insert( std::make_pair( item_handle, ChannelDescr( (*it)->getPortNumber(), i ) ) );
 				}
 			}
 
@@ -202,12 +202,12 @@ LRESULT CALLBACK MainFunc( HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param )
 		{
 			case ID_MAIN_TREE:
 			{
-				if( ((LPNMHDR)l_param)->code == NM_DBLCLK)
+				if( ( (LPNMHDR)l_param )->code == (UINT)NM_DBLCLK )
 				{
-					using namespace global;
+					using namespace global_var;
 					HTREEITEM Selected = NULL;
 					Selected=(HTREEITEM)SendDlgItemMessage(hwnd,ID_MAIN_TREE,TVM_GETNEXTITEM,TVGN_CARET,(LPARAM)Selected);
-					DialogBoxParam( global::main_hinstance, MAKEINTRESOURCE( IDD_CHANNEL_PROP ), hwnd, (DLGPROC)PropFunc, (LPARAM)Selected );
+					DialogBoxParam( global_var::main_wnd::h_instance, MAKEINTRESOURCE( IDD_CHANNEL_PROP ), hwnd, (DLGPROC)propFunc, (LPARAM)Selected );
 					return 0;
 				}
 			}

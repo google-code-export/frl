@@ -182,6 +182,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\..\..\projects\opc\psoi2\src\channel_desc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\projects\opc\psoi2\src\global_var.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\..\projects\opc\psoi2\src\main.cpp"
 				>
 			</File>
@@ -201,12 +209,20 @@
 				RelativePath="..\..\..\..\..\projects\opc\psoi2\src\psoi2_device_manager.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\..\..\projects\opc\psoi2\src\util.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="include"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\..\..\..\projects\opc\psoi2\include\channel_desc.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\..\..\projects\opc\psoi2\include\global_var.h"
 				>
@@ -229,6 +245,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\projects\opc\psoi2\resource\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\projects\opc\psoi2\include\util.h"
 				>
 			</File>
 		</Filter>

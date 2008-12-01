@@ -8,13 +8,6 @@
 using namespace frl;
 class Psoi2Device;
 
-namespace psoi2util
-{
-	void setServerInfo( opc::DAServer &toServer );
-	void regServer();
-	void unregServer();
-}
-
 class DeviceManager : private boost::noncopyable
 {
 private:
