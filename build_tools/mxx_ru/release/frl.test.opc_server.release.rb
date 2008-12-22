@@ -1,6 +1,6 @@
 require 'mxx_ru/cpp'
 
-MxxRu::Cpp::exe_target("frl.test.opc_test.release.rb")\
+MxxRu::Cpp::exe_target("frl.test.opc_server.release.rb")\
 {
 	required_prj( "frl.lib.release.rb" )
 	target("test_opc_server")
