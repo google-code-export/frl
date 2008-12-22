@@ -7,7 +7,7 @@ ruby frl.test.lexical_cast.release.rb
 ruby frl.test.logging.release.rb
 ruby frl.test.opc_address_space.release.rb
 ruby frl.test.opc_write_event_subscribe.release.rb
-ruby frl.test.opc_test.release.rb
+ruby frl.test.opc_server.release.rb
 ruby frl.test.poor_xml.release.rb
 ruby frl.test.smart_ptr.release.rb
 ruby frl.test.psoi2_sender.debug.rb
