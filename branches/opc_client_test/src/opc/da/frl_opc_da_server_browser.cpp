@@ -1,7 +1,7 @@
 #include "opc/da/frl_opc_da_server_browser.h"
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "frl_smart_ptr.h"
-#include "frl_exception.h"
+#include "os/win32/frl_os_win32_exception.h"
 
 namespace frl{ namespace opc{ namespace da{
 
@@ -11,9 +11,7 @@ void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> 
 	frl::ComPtr< ICatInformation > cat_info;
 	HRESULT result = CoCreateInstance( CLSID_StdComponentCategoriesMgr, NULL, CLSCTX_INPROC_SERVER, IID_ICatInformation, (void **)&cat_info );
 	if (FAILED(result))
-	{
-		FRL_THROW( FRL_STR("no call function CoInitialize( NULL )") );
-	}
+		FRL_THROW_SYSAPI();
 
 	frl::ComPtr<IEnumCLSID> enum_clsid;
 	CATID cat_list[1];
@@ -28,7 +26,7 @@ void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> 
 		HRESULT res = ProgIDFromCLSID(glist, &progID);
 		if(FAILED(res))
 		{
-			FRL_THROW( FRL_STR("not found class") );
+			FRL_THROW_SYSAPI();
 		}
 		else 
 		{
