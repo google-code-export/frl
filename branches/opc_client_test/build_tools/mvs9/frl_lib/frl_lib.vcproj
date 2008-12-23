@@ -349,6 +349,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="da"
+					>
+					<File
+						RelativePath="..\..\..\src\opc\da\frl_opc_da_server_browser.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="sys"
@@ -724,6 +732,14 @@
 					</File>
 					<File
 						RelativePath="..\..\..\include\opc\impl\frl_opc_impl_sync_io.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="da"
+					>
+					<File
+						RelativePath="..\..\..\include\opc\da\frl_opc_da_server_browser.h"
 						>
 					</File>
 				</Filter>
