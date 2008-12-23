@@ -32,7 +32,11 @@ void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> 
 		}
 		else 
 		{
-			to_list.push_back( progID );
+			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
+				to_list.push_back( progID );
+			#else
+				to_list.push_back( wstring2string( progID ) );
+			#endif
 		}
 	}
 }

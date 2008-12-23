@@ -3,7 +3,7 @@
 #include <io.h>
 #include "io/fs/frl_fs_fn.h"
 #include "frl_string.h"
-#include "frl_exception.h"
+#include "os/win32/frl_os_win32_exception.h"
 
 namespace frl{ namespace io{ namespace fs{
 
@@ -97,11 +97,7 @@ void close( frl::io::fs::FileDescriptor &file)
 
 frl::Bool isExist( const frl::String &fileName )
 {
-	#ifdef UNICODE
-		return ::GetFileAttributesW( fileName.c_str() ) != 0xffffffff;
-	#else
-		return ::GetFileAttributesA( fileName.c_str() ) != 0xffffffff;
-	#endif
+	return ::GetFileAttributes( fileName.c_str() ) != 0xffffffff;
 }
 
 void open( FileDescriptor &FileDescriptor, const frl::String &fileName, frl::UInt openMode, frl::UInt permMode)
@@ -131,13 +127,9 @@ void open( FileDescriptor &FileDescriptor, const frl::String &fileName, frl::UIn
 		// FIXME
 	}
 
-	#ifdef UNICODE
-		FileDescriptor = ::CreateFileW( fileName.c_str(), flags, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, creation, FILE_ATTRIBUTE_NORMAL, NULL );
-	#else
-		FileDescriptor = ::CreateFileA( fileName.c_str(), flags, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, creation, FILE_ATTRIBUTE_NORMAL,NULL );
-	#endif
+	FileDescriptor = ::CreateFile( fileName.c_str(), flags, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, creation, FILE_ATTRIBUTE_NORMAL, NULL );
 	if ( FileDescriptor == InvalidFileDescriptor)
-		FRL_THROW_SYSAPI( FRL_STR( "File \x22" ) + fileName + FRL_STR( "\x22 not opened." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "File \x22" ) + fileName + FRL_STR( "\x22 not opened. " ) );
 
 	if(openMode & openAppend)
 		seekToEnd( FileDescriptor );
@@ -147,13 +139,10 @@ void create( const frl::String &fileName, frl::UInt permMode )
 {
 	FRL_EXCEPT_GUARD();
 	FileDescriptor file;
-	#ifdef UNICODE
-		file = ::CreateFileW( fileName.c_str(), GENERIC_WRITE, FILE_SHARE_READ,NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL,NULL );
-	#else
-		file = ::CreateFileA( fileName.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL,CREATE_NEW, FILE_ATTRIBUTE_NORMAL,NULL );
-	#endif
+	
+	file = ::CreateFile( fileName.c_str(), GENERIC_WRITE, FILE_SHARE_READ,NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL,NULL );
 	if( file == InvalidFileDescriptor )
-		FRL_THROW_SYSAPI( FRL_STR( "File \x22" )+ fileName + FRL_STR( "\x22 not created."  ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "File \x22" )+ fileName + FRL_STR( "\x22 not created. "  ) );
 	close( file );
 }
 
@@ -182,7 +171,7 @@ FileOffset seek( FileDescriptor &file, FileOffset new_position, SeekMode mode )
 	}
 
 	if( pos.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
-		FRL_THROW_SYSAPI( FRL_STR( "Error move the file pointer." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error move the file pointer. " ) );
 	return pos.QuadPart;
 }
 
@@ -200,7 +189,7 @@ FileOffset length( FileDescriptor &file )
 	ULARGE_INTEGER result;
 	result.LowPart = ::GetFileSize(file, &result.HighPart );
 	if( result.LowPart  == INVALID_FILE_SIZE && GetLastError() != NO_ERROR )
-		FRL_THROW_SYSAPI( FRL_STR( "Error get file size." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error get file size. " ) );
 	return result.QuadPart;
 }
 
@@ -241,7 +230,7 @@ void flush( FileDescriptor &file )
 	if( file == InvalidFileDescriptor )
 		FRL_THROW( FRL_STR( "Invalid file FileDescriptor." ) );
 	if( ::FlushFileBuffers( file ) == 0 )
-		FRL_THROW_SYSAPI( FRL_STR( "Error flushing file buffers." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error flushing file buffers. " ) );
 }
 
 void truncate( FileDescriptor &file, FileOffset newLength )
@@ -252,7 +241,7 @@ void truncate( FileDescriptor &file, FileOffset newLength )
 	FileOffset odlpos = tell( file );
 	seek( file, newLength, seekFromStart );
 	if( ! ::SetEndOfFile( file ) )
-		FRL_THROW_SYSAPI( FRL_STR( "Error truncate file." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error truncate file. " ) );
 	seek( file, odlpos, seekFromStart );
 }
 
@@ -261,13 +250,8 @@ void removal( const frl::String &fileName )
 	FRL_EXCEPT_GUARD();
 	if ( !isExist( fileName ) )
 		FRL_THROW( FRL_STR( "File \x22" ) + fileName + FRL_STR( "\x22 not exist." ) );
-	#ifdef UNICODE
-		 if ( ::DeleteFileW( fileName.c_str() )  == FALSE )
-			FRL_THROW_SYSAPI( FRL_STR( "Error delete file \x22" ) + fileName + FRL_STR( "\x22." ) );
-	#else
-		if ( ::DeleteFileA( fileName.c_str() ) == FALSE )
-			FRL_THROW_SYSAPI( FRL_STR( "Error delete file \x22" ) + fileName + FRL_STR( "\x22." ) );
-	#endif
+	if ( ::DeleteFile( fileName.c_str() )  == FALSE )
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error delete file \x22" ) + fileName + FRL_STR( "\x22. " ) );
 }
 
 void rename( const frl::String &fileNameSrc, const frl::String &fileNameDst, Bool isOverWrite )
@@ -282,13 +266,9 @@ void rename( const frl::String &fileNameSrc, const frl::String &fileNameDst, Boo
 	}
 	if( fileNameSrc == fileNameDst )
 		FRL_THROW( FRL_STR( "Files names identical. \x22" ) + fileNameSrc + FRL_STR( "\x22 = \x22" ) + fileNameDst + FRL_STR( "\x22" ) );
-	#ifdef UNICODE
-		if( ::MoveFileExW( fileNameSrc.c_str(), fileNameDst.c_str(), MOVEFILE_REPLACE_EXISTING ) == 0 )
-			FRL_THROW_SYSAPI( FRL_STR( "File rename failed." ) );
-	#else
-		if( ::MoveFileExA( fileNameSrc.c_str(), fileNameDst.c_str(), MOVEFILE_REPLACE_EXISTING ) == 0 )
-			FRL_THROW_SYSAPI( FRL_STR( "File rename failed." ) );
-	#endif
+	
+	if( ::MoveFileEx( fileNameSrc.c_str(), fileNameDst.c_str(), MOVEFILE_REPLACE_EXISTING ) == 0 )
+		FRL_THROW_SYSAPI_EX( FRL_STR( "File rename failed. " ) );
 }
 
 void copy( const frl::String &fileNameSrc, const frl::String &fileNameDst, frl::Bool overwrite )
@@ -296,13 +276,9 @@ void copy( const frl::String &fileNameSrc, const frl::String &fileNameDst, frl::
 	FRL_EXCEPT_GUARD();
 	if ( ! isExist( fileNameSrc ) )
 		FRL_THROW( FRL_STR( "File \x22" ) + fileNameSrc + FRL_STR( "\x22 not exist." ) );
-	#ifdef UNICODE
-		if ( ! ::CopyFileW(fileNameSrc.c_str(), fileNameDst.c_str(), ! overwrite ) )
-			FRL_THROW_SYSAPI( FRL_STR( "Error file copy." ) );
-	#else
-		if ( ! ::CopyFileA(fileNameSrc.c_str(), fileNameDst.c_str(), ! overwrite ) )
-			FRL_THROW_SYSAPI( "Error file copy." );
-	#endif
+
+	if ( ! ::CopyFile(fileNameSrc.c_str(), fileNameDst.c_str(), ! overwrite ) )
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error file copy. " ) );
 }
 
 void move( const frl::String &fileNameSrc, const frl::String &fileNameDst, frl::Bool overwrite )
@@ -323,7 +299,7 @@ FileRWCount write( FileDescriptor &file, const void *data, FileRWCount count )
 		return 0;
 	FileRWCount writeCount = 0;
 	if( ::WriteFile( file, data, count, ( FileRWCount* )&writeCount, NULL ) == 0 )
-		FRL_THROW_SYSAPI( FRL_STR( "Error write data to file." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error write data to file. " ) );
 	return writeCount;
 }
 
@@ -336,7 +312,7 @@ FileRWCount read( FileDescriptor &file, void *buffer, FileRWCount count )
 		return 0;
 	FileRWCount readCount = 0;
 	if ( ::ReadFile( file, buffer, count, ( FileRWCount* )&readCount, NULL) == 0 )
-		FRL_THROW_SYSAPI( FRL_STR( "Error read data from file." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Error read data from file. " ) );
 	return readCount;
 }
 
@@ -357,13 +333,9 @@ void hardLink( const frl::String &fileName, const frl::String &linkName )
 		}
 		void Load( String moduleName )
 		{
-			#ifdef UNICODE
-				module = LoadLibraryW( moduleName.c_str() );
-			#else
-				module = LoadLibraryA( moduleName.c_str() );
-			#endif
+			module = LoadLibrary( moduleName.c_str() );
 			if ( module == NULL )
-				FRL_THROW_SYSAPI( FRL_STR("Module \x22") + moduleName + FRL_STR( "\x22 not loaded.") );
+				FRL_THROW_SYSAPI_EX( FRL_STR("Module \x22") + moduleName + FRL_STR( "\x22 not loaded. ") );
 		}
 	};
 
@@ -374,7 +346,7 @@ void hardLink( const frl::String &fileName, const frl::String &linkName )
 	ll.Load( FRL_STR( "Kernel32" ) );
 	FunctionCreateHardLink fn = (FunctionCreateHardLink)::GetProcAddress( ll.module, "CreateHardLinkW" );
 	if ( fn( linkName.c_str(), fileName.c_str(), NULL) == 0 )
-		FRL_THROW_SYSAPI( FRL_STR( "Hard link not created." ) );
+		FRL_THROW_SYSAPI_EX( FRL_STR( "Hard link not created. " ) );
 }
 
 Bool isIdentical( const String &fileName1, const String &fileName2 )
@@ -386,36 +358,29 @@ Bool isIdentical( const String &fileName1, const String &fileName2 )
 		FRL_THROW( FRL_STR( "File not Exist." ) );
 	if ( fileName1 == fileName2)
 		return True;
+
 	BY_HANDLE_FILE_INFORMATION info1,info2;
 	HANDLE hFile1,hFile2;
 	Bool same=false;
-	#ifdef UNICODE
-		hFile1=::CreateFileW(fileName1.c_str(), GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-		if(hFile1!=INVALID_HANDLE_VALUE){
-			hFile2=::CreateFileW( fileName2.c_str(), GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-			if(hFile2!=INVALID_HANDLE_VALUE){
-				if(::GetFileInformationByHandle(hFile1,&info1) && ::GetFileInformationByHandle(hFile2,&info2)){
-					same=(info1.nFileIndexLow==info2.nFileIndexLow && info1.nFileIndexHigh==info2.nFileIndexHigh && info1.dwVolumeSerialNumber==info2.dwVolumeSerialNumber);
-				}
-				::CloseHandle(hFile2);
+
+	hFile1=::CreateFile(fileName1.c_str(), GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+	if( hFile1 != INVALID_HANDLE_VALUE )
+	{
+		hFile2 = ::CreateFile( fileName2.c_str(), GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+		if(hFile2 != INVALID_HANDLE_VALUE)
+		{
+			if(::GetFileInformationByHandle(hFile1,&info1) && ::GetFileInformationByHandle(hFile2,&info2))
+			{
+				same = (
+							info1.nFileIndexLow==info2.nFileIndexLow
+							&& info1.nFileIndexHigh==info2.nFileIndexHigh
+							&& info1.dwVolumeSerialNumber==info2.dwVolumeSerialNumber );
 			}
-			::CloseHandle(hFile1);
+			::CloseHandle( hFile2 );
 		}
-		return same;
-	#else
-	hFile1=::CreateFileA(fileName1.c_str(), GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if(hFile1!=INVALID_HANDLE_VALUE){
-		hFile2=::CreateFileA( fileName2.c_str(), GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-		if(hFile2!=INVALID_HANDLE_VALUE){
-			if(::GetFileInformationByHandle(hFile1,&info1) && ::GetFileInformationByHandle(hFile2,&info2)){
-				same=(info1.nFileIndexLow==info2.nFileIndexLow && info1.nFileIndexHigh==info2.nFileIndexHigh && info1.dwVolumeSerialNumber==info2.dwVolumeSerialNumber);
-			}
-			::CloseHandle(hFile2);
-		}
-		::CloseHandle(hFile1);
+		::CloseHandle( hFile1 );
 	}
 	return same;
-	#endif
 }
 
 void concatenate( const String &fileName1, const String &fileName2, const String &fileNameDst, Bool overwrite )
@@ -513,13 +478,8 @@ void getStat( const String &fileName, Stat &stat_ )
 
 	WIN32_FILE_ATTRIBUTE_DATA data;
 	SHFILEINFO sfi;
-	#ifdef UNICODE
-		if ( ! ::GetFileAttributesExW( fileName.c_str(), GetFileExInfoStandard, &data ) )
-			FRL_THROW( FRL_STR( "Error get file attributes and statistics." ) );
-	#else
-		if ( ! ::GetFileAttributesExA( fileName.c_str(), GetFileExInfoStandard, &data ) )
-			FRL_THROW( FRL_STR( "Error get file attributes and statistics." ) );
-	#endif
+	if( ! ::GetFileAttributesEx( fileName.c_str(), GetFileExInfoStandard, &data ) )
+		FRL_THROW( FRL_STR( "Error get file attributes and statistics." ) );
 
 		if( data.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN )
 			stat_.permissionMode |= permHidden;
@@ -529,13 +489,10 @@ void getStat( const String &fileName, Stat &stat_ )
 			stat_.permissionMode |= permFile;
 		if ( data.dwFileAttributes & FILE_ATTRIBUTE_READONLY )
 			stat_.permissionMode &=~ ( permOwnerReadWrite | permGroupWrite | permOtherWrite );
-	#ifdef UNICODE
-		if(::SHGetFileInfoW(fileName.c_str(), 0, &sfi, sizeof(SHFILEINFO), SHGFI_EXETYPE)==0)
+
+		if( ::SHGetFileInfo(fileName.c_str(), 0, &sfi, sizeof(SHFILEINFO), SHGFI_EXETYPE)==0 )
 			stat_.permissionMode &=! ( permOwnerExec | permGroupExec | permOtherExec );
-	#else
-		if(::SHGetFileInfoA( fileName.c_str(), 0, &sfi, sizeof(SHFILEINFO), SHGFI_EXETYPE)==0)
-			stat_.permissionMode &=! ( permOwnerExec | permGroupExec | permOtherExec );
-	#endif
+
 		stat_.uid = 0;
 		stat_.gid = 0;
 
