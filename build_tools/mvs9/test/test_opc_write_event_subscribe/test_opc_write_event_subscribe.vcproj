@@ -21,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)..\..\output\test\opc_write_event_subscribe"
 			IntermediateDirectory="$(OutDir)\obj\$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfATL="1"
+			UseOfATL="0"
 			CharacterSet="1"
 			>
 			<Tool
@@ -100,7 +100,7 @@
 			IntermediateDirectory="$(OutDir)\obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
