@@ -2,11 +2,10 @@
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "frl_smart_ptr.h"
 #include "frl_exception.h"
-#include <COMCat.h>
 
 namespace frl{ namespace opc{ namespace da{
 
-void ServerBrowser::getServerListDA2( std::vector<frl::String> &to_list )
+void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> &to_list )
 {
 	FRL_EXCEPT_GUARD();
 	frl::ComPtr< ICatInformation > cat_info;
@@ -18,7 +17,7 @@ void ServerBrowser::getServerListDA2( std::vector<frl::String> &to_list )
 
 	frl::ComPtr<IEnumCLSID> enum_clsid;
 	CATID cat_list[1];
-	cat_list[0] = CATID_OPCDAServer20;
+	cat_list[0] = interface_;
 	result = cat_info->EnumClassesOfCategories( 1, cat_list, 0, NULL, (IEnumCLSID**)&enum_clsid );
 
 	GUID glist;
@@ -36,6 +35,24 @@ void ServerBrowser::getServerListDA2( std::vector<frl::String> &to_list )
 			to_list.push_back( progID );
 		}
 	}
+}
+
+void ServerBrowser::getServerListDA1( std::vector<String> &to_list )
+{
+	FRL_EXCEPT_GUARD();
+	getServerList( CATID_OPCDAServer10, to_list );
+}
+
+void ServerBrowser::getServerListDA2( std::vector<String> &to_list )
+{
+	FRL_EXCEPT_GUARD();
+	getServerList( CATID_OPCDAServer20, to_list );
+}
+
+void ServerBrowser::getServerListDA3( std::vector<String> &to_list )
+{
+	FRL_EXCEPT_GUARD();
+	getServerList( CATID_OPCDAServer30, to_list );
 }
 
 } // namespace da
