@@ -758,6 +758,10 @@
 				<Filter
 					Name="win32"
 					>
+					<File
+						RelativePath="..\..\..\include\os\win32\frl_os_win32_exception.h"
+						>
+					</File>
 					<Filter
 						Name="com"
 						>

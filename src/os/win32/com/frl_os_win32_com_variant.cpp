@@ -3,7 +3,7 @@
 #include <math.h>
 #include "os/win32/com/frl_os_win32_com_variant.h"
 #include "opc/frl_opc_util.h"
-#include "frl_exception.h"
+#include "os/win32/frl_os_win32_exception.h"
 
 namespace frl{ namespace os{ namespace win32{ namespace com{
 
@@ -296,16 +296,17 @@ Variant& Variant::operator=( const CY &rVal )
 
 Variant& Variant::operator=( const FILETIME &rVal )
 {
+	FRL_EXCEPT_GUARD();
 	clear();
 	value.vt = VT_DATE;
 	SYSTEMTIME st;
 	if( ! :: FileTimeToSystemTime( &rVal, &st ) )
 	{
-		FRL_THROW_SYSAPI_S();
+		FRL_THROW_SYSAPI();
 	}
 	if( ! ::SystemTimeToVariantTime( &st, &value.date ) )
 	{
-		FRL_THROW_S();
+		FRL_THROW_SYSAPI();
 	}
 	return *this;
 }
@@ -454,7 +455,7 @@ Variant::operator FILETIME() const
 	FILETIME ft;
 	if( ! ::SystemTimeToFileTime( &st, &ft ) )
 	{
-		FRL_THROW_SYSAPI_S();
+		FRL_THROW_SYSAPI();
 	}
 	return ft;
 }

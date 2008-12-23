@@ -1,6 +1,6 @@
 #include "frl_platform.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
-#include "frl_exception.h"
+#include "os/win32/frl_os_win32_exception.h"
 #include "os/win32/registry/frl_registry_Key.h"
 #include "os/win32/registry/frl_registry_RootKeys.h"
 
@@ -76,7 +76,7 @@ HKEY Key::open( DWORD premission )
 	else
 		result = RegOpenKeyEx( rootKey.getValue(), (path + FRL_STR("\\") + name).c_str(), 0, premission, &hKey );
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Can`t open registry key - "), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t open registry key - "), result );
 	return hKey;
 }
 
@@ -106,7 +106,7 @@ void Key::deleteValue( frl::String valueName )
 		openForWrite();
 	result = RegDeleteValue( hKey, valueName.c_str() );
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Can`t delete registry value \"") + valueName + FRL_STR("\" - "), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t delete registry value \"") + valueName + FRL_STR("\" - "), result );
 }
 
 void Key::close()
@@ -132,7 +132,7 @@ void Key::deleteKey( frl::Bool recurcive )
 		if ( result != ERROR_SUCCESS )
 		{
 			close();
-			FRL_THROW_SYSAPI_EX( FRL_STR("Can`t open registry root key - \"" ) + rootKey.toString() + FRL_STR("\" - "), result );
+			FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t open registry root key - \"" ) + rootKey.toString() + FRL_STR("\" - "), result );
 		}
 	}
 	else
@@ -141,7 +141,7 @@ void Key::deleteKey( frl::Bool recurcive )
 		if ( result != ERROR_SUCCESS )
 		{
 			close();
-			FRL_THROW_SYSAPI_EX( FRL_STR("Can`t open registry key - \"") + name + FRL_STR("\" - "), result );
+			FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t open registry key - \"") + name + FRL_STR("\" - "), result );
 		}
 	}
 
@@ -160,7 +160,7 @@ void Key::deleteKey( frl::Bool recurcive )
 		//result = RegDeleteKeyEx( hKey, name.c_str(), KEY_WOW64_32KEY, 0 );
 	close();
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Can`t delete registry key \"") + name + FRL_STR("\" - "), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t delete registry key \"") + name + FRL_STR("\" - "), result );
 }
 
 void Key::recurseDeleteKey( frl::String fullName )
@@ -189,7 +189,7 @@ HKEY Key::create()
 	else
 		result = RegCreateKeyEx( rootKey.getValue(), (path + FRL_STR("\\") + name ).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_CREATE_SUB_KEY, NULL, &hKey, NULL);
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Can`t create registry key \"") + name + FRL_STR("\" - "), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t create registry key \"") + name + FRL_STR("\" - "), result );
 	return hKey;
 }
 
@@ -217,7 +217,7 @@ int Key::getNumSubkeys()
 	DWORD subKeys;
 	LONG result = RegQueryInfoKey( hKey, NULL, NULL, 0, &subKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Error on get number subkeys.") ,result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Error on get number subkeys.") ,result );
 	return (int)subKeys;
 }
 
@@ -227,7 +227,7 @@ int Key::getNumSubvalues()
 	DWORD subValues;
 	LONG result = RegQueryInfoKey( hKey, NULL, NULL, 0, NULL, NULL, NULL, &subValues, NULL, NULL, NULL, NULL );
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Error on get number subkeys.") ,result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Error on get number subkeys.") ,result );
 	return (int)subValues;
 }
 
@@ -245,7 +245,7 @@ void Key::setStringValue( const String &name, const String &data )
 												(BYTE *)data.c_str(),
 												(DWORD)(data.length()+1)*sizeof(frl::Char))
 												)	!= ERROR_SUCCESS	)					
-		FRL_THROW_SYSAPI_EX( FRL_STR( "Write registry value error" ), LastError );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR( "Write registry value error. " ), LastError );
 }
 
 void Key::setStringValue( const String &data )
@@ -268,7 +268,7 @@ frl::String Key::getStringValue( const String &name )
 	DWORD type;
 	LONG result = RegQueryValueEx( openForRead(), name.c_str(), NULL, &type, NULL, (LPDWORD) &size );
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR( "Query registry value error. Value not exist? Value: " ) + name, result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR( "Query registry value error. Value not exist? Value: " ) + name +FRL_STR(". "), result );
 
 	if( type != REG_SZ && type != REG_EXPAND_SZ )
 		FRL_THROW( FRL_STR("Invalid registry value type (!=REG_SZ or !=REG_EXPAND_SZ).") );
@@ -282,7 +282,7 @@ frl::String Key::getStringValue( const String &name )
 					( BYTE*)( &value[0] ),
 					(LPDWORD) &size );
 	if( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Read registry value error!."), result );	
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Read registry value error. "), result );	
 
 	return frl::String( value.begin(), value.end() - 1 );
 }
@@ -307,7 +307,7 @@ void Key::setDWORDValue( const String &name, DWORD data )
 						reinterpret_cast<const unsigned char*>(&data),
 						sizeof( DWORD ) )
 			) != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR( "Write registry value error."), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR( "Write registry value error."), result );
 }
 
 void Key::setDWORDValue( DWORD data )
@@ -332,7 +332,7 @@ DWORD Key::getDWORDValue( const String &name )
 						reinterpret_cast< unsigned char*>( &value ),
 						&size ) ) != ERROR_SUCCESS )
 	{
-		FRL_THROW_SYSAPI_EX( FRL_STR("Read registry value error!."), result );	
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Read registry value error. "), result );	
 	}
 
 	if( type != REG_DWORD )
@@ -365,7 +365,7 @@ void Key::setMultiStringValue( const String &name, const std::vector< String > &
 						reinterpret_cast<const unsigned char*>( tmp.c_str() ),
 						(DWORD)(tmp.length()+1)*sizeof(frl::Char) ) 
 						) != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Write registry value error."), LastError );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Write registry value error. "), LastError );
 }
 
 void Key::setMultiStringValue( const std::vector< String > &data )
@@ -383,7 +383,7 @@ std::vector< String > Key::getMultiStringValue( const String &name )
 	DWORD type;
 	LONG result = RegQueryValueEx( openForRead(), name.c_str(), NULL, &type, NULL, (LPDWORD) &size);
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Query registry value error."), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Query registry value error. "), result );
 	if( type != REG_MULTI_SZ )
 		FRL_THROW( FRL_STR("Invalid registry value type (!=REG_MULTI_SZ).") );
 	
@@ -398,7 +398,7 @@ std::vector< String > Key::getMultiStringValue( const String &name )
 					!=ERROR_SUCCESS )
 	{
 		delete [] pStr;
-		FRL_THROW_SYSAPI_EX( FRL_STR("Read registry value error!."), result );	
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Read registry value error. "), result );	
 	}
 
 	std::vector< String > value;
@@ -439,7 +439,7 @@ void Key::setBinaryValue( const String &name, const std::vector< unsigned char >
 								&data[0],
 								static_cast< DWORD >( data.size() ) );
 	if ( LastError != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Write registry value error."), LastError );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Write registry value error. "), LastError );
 }
 
 void Key::setBinaryValue( const std::vector< unsigned char > &data )
@@ -462,7 +462,7 @@ std::vector< unsigned char > Key::getBinaryValue( const String &name )
 	DWORD type;
 	LONG result = RegQueryValueEx( openForRead(), name.c_str(), NULL, &type, NULL,  &size );
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Query registry value error."), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Query registry value error. "), result );
 
 	if ( type != REG_BINARY )
 		FRL_THROW( FRL_STR("Invalid registry value type (!=REG_BINARY).") );
@@ -477,7 +477,7 @@ std::vector< unsigned char > Key::getBinaryValue( const String &name )
 					(LPDWORD)&size );
 
 	if ( result != ERROR_SUCCESS )
-		FRL_THROW_SYSAPI_EX( FRL_STR("Query registry value error."), result );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Query registry value error. "), result );
 	
 	return data;
 }				

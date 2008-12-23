@@ -1,4 +1,5 @@
 #include "console_std/frl_iostream.h"
+#include "os/win32/frl_os_win32_exception.h"
 
 namespace frl{ namespace console_std{
 
@@ -27,7 +28,7 @@ void ColorOut::GetDefaultAttributes()
 	#if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 		CONSOLE_SCREEN_BUFFER_INFO bi;
 		if ( ! GetConsoleScreenBufferInfo( GetStdHandle(STD_OUTPUT_HANDLE), &bi ) )
-			FRL_THROW_SYSAPI( FRL_STR("Error on get console screen buffer information.") );
+			FRL_THROW_SYSAPI_EX( FRL_STR("Error on get console screen buffer information. ") );
 		defaultAttributes = bi.wAttributes;
 	#endif
 }
@@ -37,7 +38,7 @@ void ColorOut::SetAttributes( frl::Long attrib )
 	FRL_EXCEPT_GUARD();
 	#if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 		if( ! SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)( attrib ) ) )
-			FRL_THROW_SYSAPI( FRL_STR("Error on set console screen buffer information.") );
+			FRL_THROW_SYSAPI_EX( FRL_STR("Error on set console screen buffer information. ") );
 	#endif
 }
 
