@@ -213,10 +213,10 @@ NodesList Parser::getSubNodes( const String &buffer )
 		if( ! simple )
 		{	
 			tmpBuffer2 = tmpBuffer.substr( endNodeDef + 1, closePos - endNodeDef - 1 );
-			removeSimbolsFromStart( tmpBuffer2, FRL_STR(' ') );
-			removeSimbolsFromEnd( tmpBuffer2, FRL_STR(' ') );
-			removeSimbolsFromStart( tmpBuffer2, FRL_STR('\x09') );
-			removeSimbolsFromEnd( tmpBuffer2, FRL_STR('\x09') );
+			removeSymbolsFromStart( tmpBuffer2, FRL_STR(' ') );
+			removeSymbolsFromEnd( tmpBuffer2, FRL_STR(' ') );
+			removeSymbolsFromStart( tmpBuffer2, FRL_STR('\x09') );
+			removeSymbolsFromEnd( tmpBuffer2, FRL_STR('\x09') );
 			newNode->nodes = getSubNodes( tmpBuffer2 );
 		}
 		if( ( closePos + nodeName.length() + 3 ) > tmpBuffer.length() )
@@ -227,10 +227,10 @@ NodesList Parser::getSubNodes( const String &buffer )
 		else
 			tmpBuffer = tmpBuffer.substr( closePos + 2, tmpBuffer.length() - 1  );
 
-		removeSimbolsFromStart( tmpBuffer, FRL_STR(' ') );
-		removeSimbolsFromEnd( tmpBuffer, FRL_STR(' ') );
-		removeSimbolsFromStart( tmpBuffer, FRL_STR('\x09') );
-		removeSimbolsFromEnd( tmpBuffer, FRL_STR('\x09') );
+		removeSymbolsFromStart( tmpBuffer, FRL_STR(' ') );
+		removeSymbolsFromEnd( tmpBuffer, FRL_STR(' ') );
+		removeSymbolsFromStart( tmpBuffer, FRL_STR('\x09') );
+		removeSymbolsFromEnd( tmpBuffer, FRL_STR('\x09') );
 	}
 	return ret;
 }
@@ -243,29 +243,29 @@ std::map< String, String > Parser::getProperties( const String &buffer )
 	String tmpBuffer = buffer;
 	for( ; ; )
 	{
-		size_t equalSimbol = tmpBuffer.find( FRL_STR("=") );
-		if( equalSimbol == String::npos )
+		size_t equalSymbol = tmpBuffer.find( FRL_STR("=") );
+		if( equalSymbol == String::npos )
 			break;
-		if( equalSimbol == 0 || equalSimbol == tmpBuffer.length() - 3 ) // ="">
+		if( equalSymbol == 0 || equalSymbol == tmpBuffer.length() - 3 ) // ="">
 			FRL_THROW_S_CLASS( Document::BrokenXML );
-		size_t spaceSimbol = tmpBuffer.rfind( FRL_STR(" "), equalSimbol );
-		size_t tabSimbol = tmpBuffer.rfind( FRL_STR('\x09'), equalSimbol );
-		if( spaceSimbol == String::npos && tabSimbol == String::npos )
+		size_t spaceSymbol = tmpBuffer.rfind( FRL_STR(" "), equalSymbol );
+		size_t tabSymbol = tmpBuffer.rfind( FRL_STR('\x09'), equalSymbol );
+		if( spaceSymbol == String::npos && tabSymbol == String::npos )
 			FRL_THROW_S_CLASS( Document::BrokenXML );
-		if( tabSimbol < spaceSimbol )
-			spaceSimbol = tabSimbol;
-		if( spaceSimbol == String::npos )
+		if( tabSymbol < spaceSymbol )
+			spaceSymbol = tabSymbol;
+		if( spaceSymbol == String::npos )
 			FRL_THROW_S_CLASS( Document::BrokenXML );
-		if( equalSimbol <= spaceSimbol )
+		if( equalSymbol <= spaceSymbol )
 			FRL_THROW_S_CLASS( Document::BrokenXML );
-		String propertyName = tmpBuffer.substr( spaceSimbol, equalSimbol - spaceSimbol );
-		removeSimbolsFromStart( propertyName, FRL_STR(' ') );
-		removeSimbolsFromStart( propertyName, FRL_STR('\x09') );
-		removeSimbolsFromEnd( propertyName, FRL_STR(' ') );
-		removeSimbolsFromEnd( propertyName, FRL_STR('\x09') );
+		String propertyName = tmpBuffer.substr( spaceSymbol, equalSymbol - spaceSymbol );
+		removeSymbolsFromStart( propertyName, FRL_STR(' ') );
+		removeSymbolsFromStart( propertyName, FRL_STR('\x09') );
+		removeSymbolsFromEnd( propertyName, FRL_STR(' ') );
+		removeSymbolsFromEnd( propertyName, FRL_STR('\x09') );
 
-		size_t bracketsOneOpen = tmpBuffer.find( FRL_STR("\'"), equalSimbol );
-		size_t bracketsTwoOpen = tmpBuffer.find( FRL_STR("\""), equalSimbol );
+		size_t bracketsOneOpen = tmpBuffer.find( FRL_STR("\'"), equalSymbol );
+		size_t bracketsTwoOpen = tmpBuffer.find( FRL_STR("\""), equalSymbol );
 
 		if( bracketsOneOpen == String::npos && bracketsTwoOpen == String::npos )
 			FRL_THROW_S_CLASS( Document::BrokenXML );

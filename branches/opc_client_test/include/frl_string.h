@@ -49,10 +49,10 @@ String hexNumber2String( T number )
 	return ss.str();
 }
 
-Bool removeSimbolsFromStart( String &string, Char simbol );	
-Bool removeSimbolsFromEnd( String &string, Char simbol );
-Bool removeSimbols( String &string, Char simbol );
-size_t getCountsSimbol( const String &string, Char simbol, size_t fromPos_ = 0, size_t toPos_ = 0 );
+Bool removeSymbolsFromStart( String &string, Char symbol );	
+Bool removeSymbolsFromEnd( String &string, Char symbol );
+Bool removeSymbols( String &string, Char symbol );
+size_t getCountsSymbol( const String &string, Char symbol, size_t fromPos_ = 0, size_t toPos_ = 0 );
 
 } // FatRat Library
 

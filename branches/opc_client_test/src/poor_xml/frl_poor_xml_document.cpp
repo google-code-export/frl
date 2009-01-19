@@ -62,8 +62,8 @@ void Document::parseHeader( String &buffer )
 		String tmp = buffer.substr( headerBegin, headerEnd );
 		headerEnd += (headerBegin + 2);
 		buffer = buffer.substr( headerEnd, buffer.length() - 1 );
-		frl::removeSimbolsFromStart( tmp, FRL_STR(' ') );
-		frl::removeSimbolsFromEnd( tmp, FRL_STR(' ') );
+		frl::removeSymbolsFromStart( tmp, FRL_STR(' ') );
+		frl::removeSymbolsFromEnd( tmp, FRL_STR(' ') );
 		try
 		{
 			version = Parser::getProperty( tmp, FRL_STR("version") );
