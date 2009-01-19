@@ -103,7 +103,7 @@ namespace io{ namespace fs{
 #if( FRL_PLATFORM ==  FRL_PLATFORM_LINUX )
 	typedef frl::Int FileDerscriptor;	// File handle
 	typedef frl::Long FileOffset;		// File offset (position)
-	typedef size_t FileRWCount; // Number read-write simbols in read-write operations
+	typedef size_t FileRWCount; // Number read-write symbols in read-write operations
 
 	const Descriptor InvalidFileDescriptor = -1;	// Invalid file handle
 	const Offset InvalidFileOffset = -1;		// Invalid file offset (position)
