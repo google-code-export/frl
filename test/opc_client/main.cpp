@@ -196,11 +196,13 @@ int main( int argc, char*argv[] )
 	{
 	opc::da::Client client;
 	client.Connect( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
+	console_std::Out << client.getServerStatus() << std::endl;
 	}
 
 	{
 	opc::da::Client client;
 	client.Connect( FRL_STR("Serg Baburin.SERVER_TEST.0.1"), FRL_STR("localhost") );
+	console_std::Out << client.getServerStatus() << std::endl;
 	}
 
 	CoUninitialize();

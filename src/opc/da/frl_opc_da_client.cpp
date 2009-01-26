@@ -71,6 +71,20 @@ frl::Bool Client::IsConnected()
 	return is_connected;
 }
 
+OPCSERVERSTATE Client::getServerStatus()
+{
+	if( ! IsConnected() )
+		FRL_THROW_S_CLASS( NotConnected );
+
+	OPCSERVERSTATUS *status = NULL;
+	if( FAILED( server->GetStatus( &status ) ) )
+		FRL_THROW_S_CLASS( UnknownError );
+	OPCSERVERSTATE tmp = status->dwServerState;
+	os::win32::com::freeMemory( status->szVendorInfo );
+	os::win32::com::freeMemory( status );
+	return tmp;
+}
+
 } // namespace da
 } // namespace opc
 } // namespace frl

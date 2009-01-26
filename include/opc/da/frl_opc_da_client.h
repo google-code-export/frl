@@ -18,10 +18,13 @@ public:
 	FRL_EXCEPTION_CLASS( NotResolveProgID );
 	FRL_EXCEPTION_CLASS( CreateServerObjectError );
 	FRL_EXCEPTION_CLASS( QueryInterfaceError );
+	FRL_EXCEPTION_CLASS( NotConnected );
+	FRL_EXCEPTION_CLASS( UnknownError );
 
 	Client();
 	void Connect( const String &to_server_id, const String &to_host = FRL_STR("") );
 	Bool IsConnected();
+	OPCSERVERSTATE getServerStatus();
 }; // class Client
 
 } // namespace da
