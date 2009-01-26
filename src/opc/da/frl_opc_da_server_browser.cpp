@@ -5,7 +5,7 @@
 
 namespace frl{ namespace opc{ namespace da{
 
-void ServerBrowser::getQuickAllServerList( std::vector<String> &to_list )
+void ServerBrowser::getAllServerListForce( std::vector<String> &to_list )
 {
 	static size_t max_key_size = 256;
 	std::vector< Char > szKey( max_key_size );

@@ -10,5 +10,6 @@
 #include "opc/frl_opc_da_server.h"
 #include "opc/address_space/frl_opc_address_space.h"
 #include "opc/frl_opc_server_factory.h"
+#include "opc/da/frl_opc_da_client.h"
 
 #endif // frl_opc_h_

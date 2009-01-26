@@ -354,6 +354,10 @@
 					Name="da"
 					>
 					<File
+						RelativePath="..\..\..\src\opc\da\frl_opc_da_client.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\src\opc\da\frl_opc_da_server_browser.cpp"
 						>
 					</File>
@@ -739,6 +743,10 @@
 				<Filter
 					Name="da"
 					>
+					<File
+						RelativePath="..\..\..\include\opc\da\frl_opc_da_client.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\..\include\opc\da\frl_opc_da_server_browser.h"
 						>

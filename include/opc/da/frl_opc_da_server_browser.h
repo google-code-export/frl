@@ -11,7 +11,7 @@ class ServerBrowser
 private:
 	static void getServerList( const CATID &interface_, std::vector<String> &to_list );
 public:
-	static void getQuickAllServerList( std::vector<String> &to_list );
+	static void getAllServerListForce( std::vector<String> &to_list );
 	static void getServerListDA1( std::vector<String> &to_list );
 	static void getServerListDA2( std::vector<String> &to_list );
 	static void getServerListDA3( std::vector<String> &to_list );
