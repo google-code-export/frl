@@ -1,6 +1,7 @@
 #ifndef frl_opc_h_
 #define frl_opc_h_
 
+#include "../dependency/vendors/opc_foundation/opcda.h"
 #include "opc/frl_opc_server.h"
 #include "opc/frl_opc_util.h"
 #include "opc/frl_opc_server_kind.h"
