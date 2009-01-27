@@ -1,1 +1,0 @@
-You mast have local copy of boost library (see www.boost.org) and add the path of the boost directory to the BOOST_HOME environment variable.
