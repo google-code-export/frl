@@ -1,115 +1,27 @@
 #include "opc/da/client/frl_opc_da_client_client.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
-#include "os/win32/com/frl_os_win32_com_allocator.h"
-#include "opc/frl_opc_util.h"
 
 namespace frl{ namespace opc { namespace da{ namespace client {
 
 Client::Client()
-	: is_connected( False )
 {
-
+	CoInitialize( NULL );
 }
 
-void Client::Connect( const String &to_server_id, const String &to_host )
+Client::~Client()
 {
-	if( IsConnected() )
-		FRL_THROW_S_CLASS( AlreadyConnection );
-	
-	// find CLSID
-	CLSID cClsid = GUID_NULL;
-	
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-	if( FAILED(CLSIDFromProgID( to_server_id.c_str(), &cClsid)) )
-	{
-		if( UuidFromString( (unsigned short*)to_server_id.c_str(), &cClsid) != RPC_S_OK )
-			FRL_THROW_S_CLASS( NotResolveProgID );
-	}
-	#else
-	if( FAILED(CLSIDFromProgID( string2wstring( to_server_id ).c_str(), &cClsid)) )
-	{
-		if( UuidFromString( (unsigned char*)to_server_id.c_str(), &cClsid) != RPC_S_OK )
-			FRL_THROW_S_CLASS( NotResolveProgID );
-	}	
-	#endif // FRL_CHARACTER_UNICODE
-
-	// trying connection to server
-	if( to_host.empty() ) // if local server
-	{
-		if( FAILED( CoCreateInstance( cClsid, NULL, CLSCTX_ALL, IID_IOPCServer, (void**)&server ) ) )
-			FRL_THROW_S_CLASS( CreateServerObjectError );
-	}
-	else // if remote server
-	{
-		COSERVERINFO server_info;
-		os::win32::com::zeroMemory( &server_info );
-
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE  )
-			server_info.pwszName = util::duplicateString( to_host );
-		#else
-			server_info.pwszName = util::duplicateString( string2wstring( to_host ) );
-		#endif
-
-		// setup requested interfaces
-		MULTI_QI mq_result;
-		os::win32::com::zeroMemory( &mq_result );
-
-		mq_result.pIID = &IID_IOPCServer;
-		mq_result.pItf = NULL;
-		mq_result.hr   = S_OK;
-
-		// call create instance
-		if( FAILED( CoCreateInstanceEx( cClsid,
-													NULL,
-													CLSCTX_REMOTE_SERVER,
-													&server_info,
-													1,
-													&mq_result) ) )
-		{
-			FRL_THROW_S_CLASS( CreateServerObjectError );
-		}
-
-		// check QueryInterface result
-		if( FAILED(mq_result.hr) )
-			FRL_THROW_S_CLASS( QueryInterfaceError );
-		
-		// set pointer to server object
-		ComPtr<IOPCServer> tmp( (IOPCServer*)mq_result.pItf );
-		tmp.get()->Release(); // release tmp
-		server.swap( tmp ); // equal: this->server->ptr = mq_result.pItf
-
-	}// end trying connection
-	is_connected = True;
+	host_list.clear();
+	CoUninitialize();
 }
 
-frl::Bool Client::IsConnected()
+HostPtr Client::addHost( const String& to_host )
 {
-	return is_connected;
-}
-
-OPCSERVERSTATE Client::getServerStatus()
-{
-	if( ! IsConnected() )
-		FRL_THROW_S_CLASS( NotConnected );
-
-	OPCSERVERSTATUS *status = NULL;
-	if( FAILED( server->GetStatus( &status ) ) )
-		FRL_THROW_S_CLASS( UnknownError );
-	OPCSERVERSTATE tmp = status->dwServerState;
-	os::win32::com::freeMemory( status->szVendorInfo );
-	os::win32::com::freeMemory( status );
-	return tmp;
-}
-
-frl::Bool Client::isInterfaceSupported( const IID &iid )
-{
-	if( ! IsConnected() )
-		FRL_THROW_S_CLASS( NotConnected );
-	IUnknown *tmp;
-	if( FAILED( server->QueryInterface( iid, (void**)&tmp ) ) )
-		return False;
-	tmp->Release();
-	return True;
+	HostListMap::iterator it = host_list.find( to_host );
+	if( it != host_list.end() )
+		FRL_THROW_S_CLASS( HostAlreadyAdded );
+	HostPtr ptr( new Host( to_host ) );
+	host_list.insert( std::make_pair( to_host, ptr ) );
+	return ptr;
 }
 
 } // namespace client
