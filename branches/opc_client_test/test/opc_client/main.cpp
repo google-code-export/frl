@@ -194,15 +194,63 @@ int main( int argc, char*argv[] )
 	console_std::Out << std::endl;
 
 	{
+	console_std::Out << FRL_STR("\nConnect to local server\n");
 	opc::da::Client client;
 	client.Connect( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
+
+	console_std::Out << FRL_STR("Server status: ");
 	console_std::Out << client.getServerStatus() << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IUnknown: ");
+	console_std::Out << client.isInterfaceSupported( IID_IUnknown ) << std::endl;
+	
+	console_std::Out << FRL_STR("Support IID_IOPCCommon: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCCommon ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCServer: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCServer ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCBrowse: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCBrowse ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCBrowseServerAddressSpace: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCBrowseServerAddressSpace ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCItemIO: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCItemIO ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCItemProperties: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
 	}
 
 	{
+	console_std::Out << FRL_STR("\nConnect to remote server\n");
 	opc::da::Client client;
 	client.Connect( FRL_STR("Serg Baburin.SERVER_TEST.0.1"), FRL_STR("localhost") );
+
+	console_std::Out << FRL_STR("Server status: ");
 	console_std::Out << client.getServerStatus() << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IUnknown: ");
+	console_std::Out << client.isInterfaceSupported( IID_IUnknown ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCCommon: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCCommon ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCServer: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCServer ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCBrowse: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCBrowse ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCBrowseServerAddressSpace: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCBrowseServerAddressSpace ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCItemIO: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCItemIO ) << std::endl;
+
+	console_std::Out << FRL_STR("Support IID_IOPCItemProperties: ");
+	console_std::Out << client.isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
 	}
 
 	CoUninitialize();
