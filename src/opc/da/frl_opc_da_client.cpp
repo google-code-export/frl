@@ -85,6 +85,17 @@ OPCSERVERSTATE Client::getServerStatus()
 	return tmp;
 }
 
+frl::Bool Client::isInterfaceSupported( const IID &iid )
+{
+	if( ! IsConnected() )
+		FRL_THROW_S_CLASS( NotConnected );
+	IUnknown *tmp;
+	if( FAILED( server->QueryInterface( iid, (void**)&tmp ) ) )
+		return False;
+	tmp->Release();
+	return True;
+}
+
 } // namespace da
 } // namespace opc
 } // namespace frl

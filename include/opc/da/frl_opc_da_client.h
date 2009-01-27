@@ -25,6 +25,7 @@ public:
 	void Connect( const String &to_server_id, const String &to_host = FRL_STR("") );
 	Bool IsConnected();
 	OPCSERVERSTATE getServerStatus();
+	Bool isInterfaceSupported( const IID &iid );
 }; // class Client
 
 } // namespace da
