@@ -1,7 +1,7 @@
 #include <boost/foreach.hpp>
 
-#include "opc/da/client/frl_opc_da_client.h"
-#include "opc/da/client/frl_opc_da_server_browser.h"
+#include "opc/da/client/frl_opc_da_client_client.h"
+#include "opc/da/client/frl_opc_da_client_server_browser.h"
 #include "console_std/frl_iostream.h"
 
 

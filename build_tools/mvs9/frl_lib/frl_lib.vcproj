@@ -358,11 +358,15 @@
 						Name="client"
 						>
 						<File
-							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client.cpp"
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_client.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_server_browser.cpp"
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_server_browser.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_server_connection.cpp"
 							>
 						</File>
 					</Filter>
@@ -752,11 +756,15 @@
 						Name="client"
 						>
 						<File
-							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client.h"
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_client.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_server_browser.h"
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_server_browser.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_server_connection.h"
 							>
 						</File>
 					</Filter>
