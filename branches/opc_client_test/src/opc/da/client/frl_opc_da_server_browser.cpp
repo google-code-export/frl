@@ -1,9 +1,9 @@
-#include "opc/da/frl_opc_da_server_browser.h"
+#include "opc/da/client/frl_opc_da_server_browser.h"
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "frl_smart_ptr.h"
 #include "os/win32/frl_os_win32_exception.h"
 
-namespace frl{ namespace opc{ namespace da{
+namespace frl{ namespace opc{ namespace da{ namespace client {
 
 void ServerBrowser::getAllServerListForce( std::vector<String> &to_list )
 {
@@ -88,6 +88,7 @@ void ServerBrowser::getAllServerList( std::vector<String> &to_list )
 	getServerListDA3( to_list );
 }
 
+} // namespace client
 } // namespace da
 } // namespace opc
 } // namespace FatRat Library

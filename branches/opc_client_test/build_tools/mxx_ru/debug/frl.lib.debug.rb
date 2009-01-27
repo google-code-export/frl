@@ -39,6 +39,7 @@ MxxRu::Cpp::lib_target("frl.lib.debug.rb")\
 	lib( "ole32" )
 	lib( "user32" )
 	lib( "uuid" )
+	lib( "Rpcrt4" )
 	
 	obj_placement( MxxRu::Cpp::CustomSubdirObjPlacement.new( "../../../output/frl_lib",\
 	"../../../output/frl_lib/obj/#{mxx_runtime_mode}/1/2/3" ) )

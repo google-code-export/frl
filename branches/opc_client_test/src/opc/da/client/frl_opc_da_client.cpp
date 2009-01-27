@@ -1,7 +1,9 @@
-#include "opc/da/frl_opc_da_client.h"
+#include "opc/da/client/frl_opc_da_client.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
+#include "os/win32/com/frl_os_win32_com_allocator.h"
+#include "opc/frl_opc_util.h"
 
-namespace frl{ namespace opc { namespace da{
+namespace frl{ namespace opc { namespace da{ namespace client {
 
 Client::Client()
 	: is_connected( False )
@@ -16,11 +18,20 @@ void Client::Connect( const String &to_server_id, const String &to_host )
 	
 	// find CLSID
 	CLSID cClsid = GUID_NULL;
+	
+	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
 	if( FAILED(CLSIDFromProgID( to_server_id.c_str(), &cClsid)) )
 	{
 		if( UuidFromString( (unsigned short*)to_server_id.c_str(), &cClsid) != RPC_S_OK )
 			FRL_THROW_S_CLASS( NotResolveProgID );
 	}
+	#else
+	if( FAILED(CLSIDFromProgID( string2wstring( to_server_id ).c_str(), &cClsid)) )
+	{
+		if( UuidFromString( (unsigned char*)to_server_id.c_str(), &cClsid) != RPC_S_OK )
+			FRL_THROW_S_CLASS( NotResolveProgID );
+	}	
+	#endif // FRL_CHARACTER_UNICODE
 
 	// trying connection to server
 	if( to_host.empty() ) // if local server
@@ -32,7 +43,12 @@ void Client::Connect( const String &to_server_id, const String &to_host )
 	{
 		COSERVERINFO server_info;
 		os::win32::com::zeroMemory( &server_info );
-		server_info.pwszName = util::duplicateString( to_host );
+
+		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE  )
+			server_info.pwszName = util::duplicateString( to_host );
+		#else
+			server_info.pwszName = util::duplicateString( string2wstring( to_host ) );
+		#endif
 
 		// setup requested interfaces
 		MULTI_QI mq_result;
@@ -96,6 +112,7 @@ frl::Bool Client::isInterfaceSupported( const IID &iid )
 	return True;
 }
 
+} // namespace client
 } // namespace da
 } // namespace opc
 } // namespace frl

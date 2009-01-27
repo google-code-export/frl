@@ -67,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="Rpcrt4.lib"
 				OutputFile="$(OutDir)\frl_d.lib"
 			/>
 			<Tool
@@ -353,14 +354,18 @@
 				<Filter
 					Name="da"
 					>
-					<File
-						RelativePath="..\..\..\src\opc\da\frl_opc_da_client.cpp"
+					<Filter
+						Name="client"
 						>
-					</File>
-					<File
-						RelativePath="..\..\..\src\opc\da\frl_opc_da_server_browser.cpp"
-						>
-					</File>
+						<File
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_server_browser.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -743,14 +748,18 @@
 				<Filter
 					Name="da"
 					>
-					<File
-						RelativePath="..\..\..\include\opc\da\frl_opc_da_client.h"
+					<Filter
+						Name="client"
 						>
-					</File>
-					<File
-						RelativePath="..\..\..\include\opc\da\frl_opc_da_server_browser.h"
-						>
-					</File>
+						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_server_browser.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
