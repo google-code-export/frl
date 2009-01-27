@@ -2,10 +2,12 @@
 #define frl_opc_da_client_h_
 #include "frl_platform.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
-#include "frl_opc.h"
+#include "../dependency/vendors/opc_foundation/opcda.h"
+#include "../dependency/vendors/opc_foundation/opccomn.h"
+#include "frl_smart_ptr.h"
 #include "frl_exception.h"
 
-namespace frl{ namespace opc{ namespace da{
+namespace frl{ namespace opc{ namespace da{ namespace client {
 
 class Client
 {
@@ -28,6 +30,7 @@ public:
 	Bool isInterfaceSupported( const IID &iid );
 }; // class Client
 
+} // namespace client
 } // namespace da
 } // namespace opc
 } // namespace frl
