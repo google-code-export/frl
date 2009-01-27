@@ -1,4 +1,4 @@
-#include "opc/da/client/frl_opc_da_client.h"
+#include "opc/da/client/frl_opc_da_client_client.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 #include "os/win32/com/frl_os_win32_com_allocator.h"
 #include "opc/frl_opc_util.h"
