@@ -362,6 +362,10 @@
 							>
 						</File>
 						<File
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_host.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_server_browser.cpp"
 							>
 						</File>
@@ -757,6 +761,10 @@
 						>
 						<File
 							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_client.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_host.h"
 							>
 						</File>
 						<File

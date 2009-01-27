@@ -2,32 +2,23 @@
 #define frl_opc_da_client_h_
 #include "frl_platform.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
-#include "../dependency/vendors/opc_foundation/opcda.h"
-#include "../dependency/vendors/opc_foundation/opccomn.h"
-#include "frl_smart_ptr.h"
-#include "frl_exception.h"
+#include <map>
+#include "opc/da/client/frl_opc_da_client_host.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client {
 
 class Client
 {
 private:
-	Bool is_connected;
-	frl::ComPtr<IOPCServer> server;
-
+	typedef std::pair< String, HostPtr > HostListElem;
+	typedef std::map< String, HostPtr > HostListMap;
+	HostListMap host_list;
 public:
-	FRL_EXCEPTION_CLASS( AlreadyConnection );
-	FRL_EXCEPTION_CLASS( NotResolveProgID );
-	FRL_EXCEPTION_CLASS( CreateServerObjectError );
-	FRL_EXCEPTION_CLASS( QueryInterfaceError );
-	FRL_EXCEPTION_CLASS( NotConnected );
-	FRL_EXCEPTION_CLASS( UnknownError );
-
+	FRL_EXCEPTION_CLASS( HostAlreadyAdded );
 	Client();
-	void Connect( const String &to_server_id, const String &to_host = FRL_STR("") );
-	Bool IsConnected();
-	OPCSERVERSTATE getServerStatus();
-	Bool isInterfaceSupported( const IID &iid );
+	~Client();
+	HostPtr addHost( const String &to_host );
+	ServerConnectionPtr addConnection( const HostPtr& to_host );
 }; // class Client
 
 } // namespace client
