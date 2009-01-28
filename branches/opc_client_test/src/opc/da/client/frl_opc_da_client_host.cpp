@@ -4,7 +4,7 @@
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
 
-Host::Host( const String &name_ )
+Host::Host( const String& name_ )
 : name( name_ )
 {
 
@@ -23,6 +23,14 @@ ServerConnectionPtr Host::addConnection( const String& server_id )
 	ServerConnectionPtr ptr( new ServerConnection( server_id, name ) );
 	connection_list.insert( std::make_pair( server_id, ptr ) );
 	return ptr;
+}
+
+ServerConnectionPtr Host::getConnection( const String& server_id )
+{
+	ConnectionList::iterator it = connection_list.find( server_id );
+	if( it == connection_list.end() )
+		FRL_THROW_S_CLASS( ConnectionNotFound );
+	return it->second;
 }
 
 } // namespace client

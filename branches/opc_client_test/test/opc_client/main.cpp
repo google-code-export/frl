@@ -82,6 +82,8 @@ int main( int argc, char*argv[] )
 
 	console_std::Out << FRL_STR("Support IID_IOPCItemProperties: ");
 	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
+
+	opc::da::client::ServerConnectionPtr tmp = localhost->getConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
 	
 	return 0;
  }
