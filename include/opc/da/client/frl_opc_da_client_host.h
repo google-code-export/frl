@@ -16,10 +16,12 @@ private:
 	ConnectionList connection_list;
 public:
 	FRL_EXCEPTION_CLASS( ConnectionAlreadyAdded );
+	FRL_EXCEPTION_CLASS( ConnectionNotFound );
 
-	Host( const String &name_ );
+	Host( const String& name_ );
 	String getName();
 	ServerConnectionPtr addConnection( const String& server_id );
+	ServerConnectionPtr getConnection( const String& server_id );
 }; // class Host
 
 typedef boost::shared_ptr< Host > HostPtr;
