@@ -33,7 +33,7 @@ public:
 
 	void Connect();
 	Bool IsConnected();
-	OPCSERVERSTATE getServerStatus();
+	OPCSERVERSTATE getServerState();
 	Bool isInterfaceSupported( const IID &iid );
 	const String& getServerID();
 	const String& getHostName();
