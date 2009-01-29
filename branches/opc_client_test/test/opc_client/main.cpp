@@ -60,7 +60,7 @@ int main( int argc, char*argv[] )
 	my_srv->Connect();
 
 	console_std::Out << FRL_STR("Server status: ");
-	console_std::Out << my_srv->getServerStatus() << std::endl;
+	console_std::Out << my_srv->getServerState() << std::endl;
 	
 	console_std::Out << FRL_STR("Support IID_IUnknown: ");
 	console_std::Out << my_srv->isInterfaceSupported( IID_IUnknown ) << std::endl;

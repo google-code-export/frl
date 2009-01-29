@@ -90,7 +90,7 @@ frl::Bool ServerConnection::IsConnected()
 	return is_connected;
 }
 
-OPCSERVERSTATE ServerConnection::getServerStatus()
+OPCSERVERSTATE ServerConnection::getServerState()
 {
 	if( ! IsConnected() )
 		FRL_THROW_S_CLASS( NotConnected );
