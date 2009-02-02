@@ -9,14 +9,19 @@ namespace frl{ namespace opc{ namespace da{ namespace client{
 
 class GroupBase : private boost::noncopyable
 {
+private:
+	void removeGroup( Bool force_ );
+
 protected:
 	GroupInfo info;
 
 public:
+
 	GroupBase( const String& name_, ComPtr<IOPCServer> server_ptr_ );
 	virtual ~GroupBase();
 	void create();
 	void remove();
+	void removeForce();
 	const String& getName();
 };
 

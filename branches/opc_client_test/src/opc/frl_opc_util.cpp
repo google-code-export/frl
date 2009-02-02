@@ -72,28 +72,6 @@ wchar_t* duplicateString( const std::wstring &string )
 
 HRESULT getErrorString( HRESULT dwError, LCID lcid, String& to_string )
 {
-	LANGID langID = LANGIDFROMLCID(lcid);
-	switch( lcid )
-	{
-	case LOCALE_SYSTEM_DEFAULT:
-		{
-			langID = GetSystemDefaultLangID();
-			break;
-		}
-
-	case LOCALE_USER_DEFAULT:
-		{
-			langID = GetUserDefaultLangID();
-			break;
-		}
-
-	case LOCALE_INVARIANT:
-		{
-			langID = LANGIDFROMLCID(LOCALE_NEUTRAL);
-			break;
-		}
-	}
-
 	switch ( dwError )
 	{
 		case OPC_E_INVALIDHANDLE:
@@ -215,6 +193,28 @@ HRESULT getErrorString( HRESULT dwError, LCID lcid, String& to_string )
 
 		default:
 			{
+				LANGID langID = LANGIDFROMLCID(lcid);
+				switch( lcid )
+				{
+				case LOCALE_SYSTEM_DEFAULT:
+					{
+						langID = GetSystemDefaultLangID();
+						break;
+					}
+
+				case LOCALE_USER_DEFAULT:
+					{
+						langID = GetUserDefaultLangID();
+						break;
+					}
+
+				case LOCALE_INVARIANT:
+					{
+						langID = LANGIDFROMLCID(LOCALE_NEUTRAL);
+						break;
+					}
+				}
+
 				to_string = sys::util::getCodeErrorDescription( langID, dwError );
 				if( to_string.empty() )
 				{
@@ -230,7 +230,7 @@ HRESULT getErrorString( HRESULT dwError, LCID lcid, String& to_string )
 					}
 					else
 					{
-						if (PRIMARYLANGID(langID) == LANG_ENGLISH)
+						if( PRIMARYLANGID(langID) == LANG_ENGLISH )
 						{	
 							to_string = sys::util::getCodeErrorDescription( LANGIDFROMLCID(MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT)), dwError );
 							if( to_string.empty() )
