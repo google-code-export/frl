@@ -47,7 +47,7 @@ public:
 static OPCServerFactory factory;
 
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM_WIN32
 #endif // frl_opc_server_factory_h__

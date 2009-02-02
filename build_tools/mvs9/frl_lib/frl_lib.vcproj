@@ -362,6 +362,10 @@
 							>
 						</File>
 						<File
+							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_group_base.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\..\..\src\opc\da\client\frl_opc_da_client_host.cpp"
 							>
 						</File>
@@ -760,7 +764,19 @@
 						Name="client"
 						>
 						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_async_io_2_group.h"
+							>
+						</File>
+						<File
 							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_client.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_group_base.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\include\opc\da\client\frl_opc_da_client_group_info.h"
 							>
 						</File>
 						<File

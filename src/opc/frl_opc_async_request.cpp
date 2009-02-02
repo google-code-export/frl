@@ -177,6 +177,6 @@ frl::Bool AsyncRequest::isUpdate()
 	return type == async_request::UPDATE;
 }
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM == FRL_PLATFORM_WIN32

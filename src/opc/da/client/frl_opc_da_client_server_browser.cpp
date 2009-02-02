@@ -1,4 +1,5 @@
 #include "opc/da/client/frl_opc_da_client_server_browser.h"
+#if( FRL_PLATFORM ==FRL_PLATFORM_WIN32 )
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "frl_smart_ptr.h"
 #include "os/win32/frl_os_win32_exception.h"
@@ -92,3 +93,5 @@ void ServerBrowser::getAllServerList( std::vector<String> &to_list )
 } // namespace da
 } // namespace opc
 } // namespace FatRat Library
+
+#endif // FRL_PLATFORM_WIN32

@@ -77,6 +77,6 @@ void AddrSpaceCrawler::browse( std::vector< TagBrowseInfo >& arr )
 
 } // namespace address_space
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM_WIN32

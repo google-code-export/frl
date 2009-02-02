@@ -43,7 +43,7 @@ public:
 
 } // namespace address_space
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM_WIN32
 #endif // frl_opc_addr_space_crawler_h_

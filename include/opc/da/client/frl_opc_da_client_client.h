@@ -24,7 +24,7 @@ public:
 } // namespace client
 } // namespace da
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM
 #endif // frl_opc_da_client_h_
