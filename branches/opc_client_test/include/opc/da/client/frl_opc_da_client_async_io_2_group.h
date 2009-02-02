@@ -3,10 +3,11 @@
 #include "frl_platform.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 #include"opc/da/client/frl_opc_da_client_group_base.h"
+#include <iostream>
 
 namespace frl{ namespace opc{ namespace da{ namespace client {
 
-class AsyncIO2Group : public GroupBase
+class AsyncIO2Group : virtual public GroupBase
 {
 private:
 	OPCHANDLE callback_handle; // callback handle given by the server
@@ -16,7 +17,6 @@ public:
 		: GroupBase( name, server_ptr_ )
 	{
 	}
-
 };
 
 } // namespace client

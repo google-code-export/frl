@@ -14,7 +14,9 @@ protected:
 
 public:
 	GroupBase( const String& name_, ComPtr<IOPCServer> server_ptr_ );
+	virtual ~GroupBase();
 	void create();
+	void remove();
 	const String& getName();
 };
 

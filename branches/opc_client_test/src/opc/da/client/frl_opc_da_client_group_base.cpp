@@ -3,7 +3,13 @@
 
 namespace frl{ namespace opc{ namespace da{ namespace client {
 
-GroupBase::GroupBase( const String& name_, ComPtr<IOPCServer> server_ptr_ ) :	info( name_, server_ptr_ )
+GroupBase::GroupBase( const String& name_, ComPtr<IOPCServer> server_ptr_ )
+	:	info( name_, server_ptr_ )
+{
+}
+
+
+GroupBase::~GroupBase()
 {
 }
 
@@ -29,6 +35,11 @@ void GroupBase::create()
 const String& GroupBase::getName()
 {
 	return info.name;
+}
+
+void GroupBase::remove()
+{
+
 }
 
 } // namespace client
