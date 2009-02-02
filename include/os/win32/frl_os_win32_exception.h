@@ -12,22 +12,22 @@ class SystemException : public Exception
 {
 public:
 
-	SystemException( const frl::String &function_, const frl::String &file_, frl::ULong line_)\
+	SystemException( const frl::String &function_, const frl::String &file_, frl::ULong line_)
 		: frl::Exception( sys::util::getLastErrorDescription(), function_, file_, line_ )
 	{
 	}
 
-	SystemException( const frl::String &description_, const frl::String &function_, const frl::String &file_, frl::ULong line_)\
+	SystemException( const frl::String &description_, const frl::String &function_, const frl::String &file_, frl::ULong line_)
 		: frl::Exception( description_ + sys::util::getLastErrorDescription(), function_, file_, line_ )
 	{
 	}
 
-	SystemException( DWORD error_code, const frl::String &function_, const frl::String &file_, frl::ULong line_)\
+	SystemException( DWORD error_code, const frl::String &function_, const frl::String &file_, frl::ULong line_)
 		: frl::Exception( sys::util::getCodeErrorDescription( error_code ), function_, file_, line_ )
 	{
 	}
 
-	SystemException( DWORD error_code, const frl::String &description_, const frl::String &function_, const frl::String &file_, frl::ULong line_)\
+	SystemException( DWORD error_code, const frl::String &description_, const frl::String &function_, const frl::String &file_, frl::ULong line_)
 		: frl::Exception( description_ + sys::util::getCodeErrorDescription( error_code ), function_, file_, line_ )
 	{
 	}
@@ -39,7 +39,7 @@ public:
 	throw( frl::os::win32::SystemException( FRL_FUNCTION_NAME, FRL_FILE_NAME, __LINE__ ) );
 
 #define FRL_THROW_SYSAPI_CODE( error_code )\
-	throw( frl::os::win32::SystemException( FRL_FUNCTION_NAME, FRL_FILE_NAME, __LINE__ ) );
+	throw( frl::os::win32::SystemException( error_code, FRL_FUNCTION_NAME, FRL_FILE_NAME, __LINE__ ) );
 
 #define FRL_THROW_SYSAPI_EX( description )\
 	throw( frl::os::win32::SystemException( description, FRL_FUNCTION_NAME, FRL_FILE_NAME, __LINE__ ) );
