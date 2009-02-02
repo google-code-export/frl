@@ -38,18 +38,6 @@ const String& GroupBase::getName()
 	return info.name;
 }
 
-void GroupBase::removeMe()
-{
-	FRL_EXCEPT_GUARD();
-	removeGroup( False );
-}
-
-void GroupBase::removeMeForce()
-{
-	FRL_EXCEPT_GUARD();
-	removeGroup( True );
-}
-
 void GroupBase::removeGroup( Bool force_ )
 {
 	FRL_EXCEPT_GUARD();

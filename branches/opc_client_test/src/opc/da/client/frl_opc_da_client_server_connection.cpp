@@ -158,6 +158,28 @@ ServerConnection::GroupElem ServerConnection::getGroup( const String& name )
 	return it->second;
 }
 
+void ServerConnection::removeGroup( const String& name_ )
+{
+	FRL_EXCEPT_GUARD();
+	internalRemoveGroup( name_, False );
+}
+
+void ServerConnection::removeGroupForce( const String& name_ )
+{
+	FRL_EXCEPT_GUARD();
+	internalRemoveGroup( name_, False );
+}
+
+void ServerConnection::internalRemoveGroup( const String& name_, Bool force )
+{
+	FRL_EXCEPT_GUARD();
+	GroupList::iterator it = group_list.find( name_ );
+	if( it == group_list.end() )
+		FRL_THROW_S_CLASS( GroupNotExist );
+	it->second->removeGroup( force );
+	group_list.erase( it );
+}
+
 } // namespace client
 } // namespace da
 } // namespace opc

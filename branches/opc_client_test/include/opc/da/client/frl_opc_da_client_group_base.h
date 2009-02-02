@@ -7,22 +7,22 @@
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
 
+class ServerConnection;
+
 class GroupBase : private boost::noncopyable
 {
+friend class client::ServerConnection;
 private:
+	void create();
 	void removeGroup( Bool force_ );
+	void renameTo( const String& new_name );
 
 protected:
 	GroupInfo info;
 
 public:
-
 	GroupBase( const String& name_, ComPtr<IOPCServer> server_ptr_ );
 	virtual ~GroupBase();
-	void create();
-	void removeMe();
-	void removeMeForce();
-	void renameTo( const String& new_name );
 	const String& getName();
 };
 
