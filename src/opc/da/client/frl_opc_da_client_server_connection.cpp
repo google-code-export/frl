@@ -78,12 +78,6 @@ const String& ServerConnection::getHostName()
 	return host_name;
 }
 
-void ServerConnection::addGroupAsyncIO2( const String& group_name )
-{
-	AsyncIO2Group new_gr( group_name, server );
-	new_gr.create();
-}
-
 void ServerConnection::connectToRemoteServer( CLSID server_clsid )
 {
 	FRL_EXCEPT_GUARD();
@@ -143,6 +137,25 @@ CLSID ServerConnection::getCLSID()
 	}	
 	#endif // FRL_CHARACTER_UNICODE
 	return server_clsid;
+}
+
+ServerConnection::GroupElem ServerConnection::addGroupAsyncIO2( const String& group_name )
+{
+	AsyncIO2Group *new_gr = new AsyncIO2Group( group_name, server );
+	new_gr->create();
+	GroupElem new_group( new_gr );
+	GroupElemPair new_elem( group_name, new_group );
+	group_list.insert( new_elem );
+	return new_group; 
+}
+
+ServerConnection::GroupElem ServerConnection::getGroup( const String& name )
+{
+	FRL_EXCEPT_GUARD();
+	GroupList::iterator it = group_list.find( name );
+	if( it == group_list.end() )
+		FRL_THROW_S_CLASS( GroupNotExist );
+	return it->second;
 }
 
 } // namespace client

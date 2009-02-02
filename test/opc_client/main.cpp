@@ -2,6 +2,7 @@
 
 #include "opc/da/client/frl_opc_da_client_client.h"
 #include "opc/da/client/frl_opc_da_client_server_browser.h"
+#include "opc/da/client/frl_opc_da_client_async_io_2_group.h"
 #include "console_std/frl_iostream.h"
 
 
@@ -56,36 +57,38 @@ int main( int argc, char*argv[] )
 	console_std::Out << FRL_STR("\nConnect to local server\n");
 	opc::da::client::Client client;
 	opc::da::client::HostPtr localhost = client.addHost( FRL_STR("localhost") );
-	opc::da::client::ServerConnectionPtr my_srv = localhost->addConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
-	my_srv->connect();
+	opc::da::client::ServerConnectionPtr test_client = localhost->addConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
+	test_client->connect();
 
 	console_std::Out << FRL_STR("Server status: ");
-	console_std::Out << my_srv->getServerState() << std::endl;
+	console_std::Out << test_client->getServerState() << std::endl;
 	
 	console_std::Out << FRL_STR("Support IID_IUnknown: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IUnknown ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IUnknown ) << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCCommon: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCCommon ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IOPCCommon ) << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCServer: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCServer ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IOPCServer ) << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCBrowse: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCBrowse ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IOPCBrowse ) << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCBrowseServerAddressSpace: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCBrowseServerAddressSpace ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IOPCBrowseServerAddressSpace ) << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCItemIO: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCItemIO ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IOPCItemIO ) << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCItemProperties: ");
-	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
+	console_std::Out << test_client->isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
 
-	opc::da::client::ServerConnectionPtr tmp = localhost->getConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
+	opc::da::client::ServerConnectionPtr my_srv = localhost->getConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
 
-	tmp->addGroupAsyncIO2( FRL_STR("test_group") );
-	
+	using namespace frl::opc::da::client;
+	my_srv->addGroupAsyncIO2( FRL_STR("test_group") );
+	ServerConnection::GroupElem gr_ptr = my_srv->getGroup( FRL_STR("test_group") );
+
 	return 0;
  }

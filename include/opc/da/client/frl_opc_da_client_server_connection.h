@@ -8,19 +8,29 @@
 #include "../dependency/vendors/opc_foundation/opccomn.h"
 #include "frl_smart_ptr.h"
 #include "frl_exception.h"
+#include <map>
+#include "opc/da/client/frl_opc_da_client_group_base.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
 
 class ServerConnection : private boost::noncopyable
 {
+public:
+	typedef boost::shared_ptr< client::GroupBase > GroupElem;
+
 private:
 	ComPtr<IOPCServer> server;
 	Bool is_connected;
 	String server_id;
 	String host_name;
 
+	typedef std::pair< String, GroupElem > GroupElemPair;
+	typedef std::map< String, GroupElem > GroupList;
+	GroupList group_list;
+
 	void connectToRemoteServer( CLSID cClsid );
 	CLSID getCLSID();
+
 public:
 	FRL_EXCEPTION_CLASS( AlreadyConnection );
 	FRL_EXCEPTION_CLASS( NotResolveProgID );
@@ -28,6 +38,8 @@ public:
 	FRL_EXCEPTION_CLASS( QueryInterfaceError );
 	FRL_EXCEPTION_CLASS( NotConnected );
 	FRL_EXCEPTION_CLASS( UnknownError );
+	FRL_EXCEPTION_CLASS( GroupNotExist );
+	FRL_EXCEPTION_CLASS( GroupAlreadyExist );
 
 	ServerConnection( const String& server_id_, const String& host_name_ );
 	~ServerConnection();
@@ -38,7 +50,8 @@ public:
 	Bool isInterfaceSupported( const IID &iid );
 	const String& getServerID();
 	const String& getHostName();
-	void addGroupAsyncIO2( const String& group_name );
+	GroupElem addGroupAsyncIO2( const String& group_name );
+	GroupElem getGroup( const String& name );
 
 }; // class ServerConnection
 
