@@ -97,11 +97,11 @@ int main( int argc, char*argv[] )
 		ex.~Exception();
 	}
 	ServerConnection::GroupElem gr_ptr = my_srv->getGroup( FRL_STR("test_group") );
-	gr_ptr->remove();
+	gr_ptr->removeMe();
 
 	try
 	{
-		gr_ptr->remove();
+		gr_ptr->removeMe();
 	}
 	catch( frl::Exception &ex )
 	{

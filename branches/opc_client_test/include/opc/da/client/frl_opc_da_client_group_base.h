@@ -20,8 +20,9 @@ public:
 	GroupBase( const String& name_, ComPtr<IOPCServer> server_ptr_ );
 	virtual ~GroupBase();
 	void create();
-	void remove();
-	void removeForce();
+	void removeMe();
+	void removeMeForce();
+	void renameTo( const String& new_name );
 	const String& getName();
 };
 

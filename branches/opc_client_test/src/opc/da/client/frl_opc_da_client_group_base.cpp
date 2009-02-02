@@ -38,13 +38,13 @@ const String& GroupBase::getName()
 	return info.name;
 }
 
-void GroupBase::remove()
+void GroupBase::removeMe()
 {
 	FRL_EXCEPT_GUARD();
 	removeGroup( False );
 }
 
-void GroupBase::removeForce()
+void GroupBase::removeMeForce()
 {
 	FRL_EXCEPT_GUARD();
 	removeGroup( True );
@@ -58,6 +58,11 @@ void GroupBase::removeGroup( Bool force_ )
 	{
 		FRL_THROW_OPC( result );
 	}
+}
+
+void GroupBase::renameTo( const String& new_name )
+{
+	FRL_EXCEPT_GUARD();
 }
 
 } // namespace client
