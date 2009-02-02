@@ -36,6 +36,6 @@ ServerConnectionPtr Host::getConnection( const String& server_id )
 } // namespace client
 } // namespace da
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM_WIN32

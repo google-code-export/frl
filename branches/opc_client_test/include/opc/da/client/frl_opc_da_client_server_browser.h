@@ -1,5 +1,8 @@
 #ifndef frl_opc_da_client_browser_h_
 #define frl_opc_da_client_browser_h_
+#include "frl_platform.h"
+#if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
+
 #include <vector>
 #include <COMCat.h>
 #include "frl_types.h"
@@ -23,4 +26,5 @@ public:
 } // namespace opc
 } // namespace FatRat Library
 
+#endif // FRL_PLATFORM_WIN32
 #endif // frl_opc_da_client_browser_h_

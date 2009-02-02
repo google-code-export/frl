@@ -71,7 +71,7 @@ typedef boost::shared_ptr< AsyncRequest > AsyncRequestListElem;
 typedef std::list< AsyncRequestListElem > AsyncRequestList;
 
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM == FRL_PLATFORM_WIN32
 #endif // frl_opc_async_request_h_

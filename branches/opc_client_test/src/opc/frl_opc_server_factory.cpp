@@ -96,6 +96,6 @@ frl::Bool OPCServerFactory::isServerInUse()
 }
 
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM_WIN32

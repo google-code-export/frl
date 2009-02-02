@@ -57,7 +57,7 @@ int main( int argc, char*argv[] )
 	opc::da::client::Client client;
 	opc::da::client::HostPtr localhost = client.addHost( FRL_STR("localhost") );
 	opc::da::client::ServerConnectionPtr my_srv = localhost->addConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
-	my_srv->Connect();
+	my_srv->connect();
 
 	console_std::Out << FRL_STR("Server status: ");
 	console_std::Out << my_srv->getServerState() << std::endl;
@@ -84,6 +84,8 @@ int main( int argc, char*argv[] )
 	console_std::Out << my_srv->isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
 
 	opc::da::client::ServerConnectionPtr tmp = localhost->getConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
+
+	tmp->addGroupAsyncIO2( FRL_STR("test_group") );
 	
 	return 0;
  }

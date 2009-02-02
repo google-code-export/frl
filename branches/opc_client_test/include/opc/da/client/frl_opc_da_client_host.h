@@ -29,7 +29,7 @@ typedef boost::shared_ptr< Host > HostPtr;
 } // namespace client
 } // namespace da
 } // namespace opc
-} // namespace frl
+} // FatRat Library
 
 #endif // FRL_PLATFORM_WIN32
 #endif // frl_opc_da_client_host_h_
