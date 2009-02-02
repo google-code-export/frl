@@ -88,7 +88,25 @@ int main( int argc, char*argv[] )
 
 	using namespace frl::opc::da::client;
 	my_srv->addGroupAsyncIO2( FRL_STR("test_group") );
+	try
+	{
+		my_srv->addGroupAsyncIO2( FRL_STR("test_group") );
+	}
+	catch( frl::Exception &ex )
+	{
+		ex.~Exception();
+	}
 	ServerConnection::GroupElem gr_ptr = my_srv->getGroup( FRL_STR("test_group") );
+	gr_ptr->remove();
+
+	try
+	{
+		gr_ptr->remove();
+	}
+	catch( frl::Exception &ex )
+	{
+		ex.~Exception();
+	}
 
 	return 0;
  }

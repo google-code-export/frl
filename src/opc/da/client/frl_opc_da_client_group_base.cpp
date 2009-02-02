@@ -1,5 +1,6 @@
 #include "opc/da/client/frl_opc_da_client_group_base.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
+#include "opc/frl_opc_exception.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client {
 
@@ -15,7 +16,7 @@ GroupBase::~GroupBase()
 
 void GroupBase::create()
 {
-	HRESULT result = info.server_ptr->AddGroup( info.name.c_str(), 
+	HRESULT result = info.server_ptr->AddGroup( unicodeCompatibility( info.name ).c_str(), 
 																	FALSE,
 																	1000,
 																	0,
@@ -26,9 +27,9 @@ void GroupBase::create()
 																	&info.update_rate,
 																	IID_IOPCGroupStateMgt,
 																	(LPUNKNOWN*)(&info.group_state_mgt) );
-	if (FAILED(result))
+	if( FAILED(result) )
 	{
-		throw String( FRL_STR("Failed to Add group") );
+		FRL_THROW_OPC( result );
 	}
 }
 
@@ -39,7 +40,24 @@ const String& GroupBase::getName()
 
 void GroupBase::remove()
 {
+	FRL_EXCEPT_GUARD();
+	removeGroup( False );
+}
 
+void GroupBase::removeForce()
+{
+	FRL_EXCEPT_GUARD();
+	removeGroup( True );
+}
+
+void GroupBase::removeGroup( Bool force_ )
+{
+	FRL_EXCEPT_GUARD();
+	HRESULT result = info.server_ptr->RemoveGroup( info.group_handle, BOOL( force_ ) );
+	if( FAILED(result) )
+	{
+		FRL_THROW_OPC( result );
+	}
 }
 
 } // namespace client
