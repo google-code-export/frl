@@ -96,12 +96,12 @@ int main( int argc, char*argv[] )
 	{
 		ex.~Exception();
 	}
-	ServerConnection::GroupElem gr_ptr = my_srv->getGroup( FRL_STR("test_group") );
-	gr_ptr->removeMe();
 
+	ServerConnection::GroupElem gr_ptr = my_srv->getGroup( FRL_STR("test_group") );
+	my_srv->removeGroup( gr_ptr->getName() );
 	try
 	{
-		gr_ptr->removeMe();
+		my_srv->removeGroup( gr_ptr->getName() );	
 	}
 	catch( frl::Exception &ex )
 	{

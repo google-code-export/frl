@@ -30,7 +30,7 @@ private:
 
 	void connectToRemoteServer( CLSID cClsid );
 	CLSID getCLSID();
-
+	void internalRemoveGroup( const String& name_, Bool force );
 public:
 	FRL_EXCEPTION_CLASS( AlreadyConnection );
 	FRL_EXCEPTION_CLASS( NotResolveProgID );
@@ -52,6 +52,8 @@ public:
 	const String& getHostName();
 	GroupElem addGroupAsyncIO2( const String& group_name );
 	GroupElem getGroup( const String& name );
+	void removeGroup( const String& name );
+	void removeGroupForce( const String& name );
 
 }; // class ServerConnection
 
