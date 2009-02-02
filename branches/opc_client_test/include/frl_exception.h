@@ -105,18 +105,19 @@ public:
 	};
 };
 
+
 #define FRL_EXCEPTION_CLASS( xClass )\
 class xClass : public frl::Exception\
 {\
 public:\
 	xClass( const frl::String &description_)\
-	: frl::Exception( description_ ) {}\
+		: frl::Exception( description_ ) {}\
 	xClass( const frl::String &function_, const frl::String &file_, frl::ULong line_)\
-	: frl::Exception( function_, file_, line_ ) {}\
+		: frl::Exception( similarCompatibility( typeid( xClass ).name() ), function_, file_, line_ ) {}\
 	xClass( const frl::String &description_, const frl::String &function_ )\
-	: frl::Exception( description_, function_ ) {}\
+		: frl::Exception( description_, function_ ) {}\
 	xClass( const frl::String &description_, const frl::String &function_, const frl::String &file_, frl::ULong line_ )\
-	: frl::Exception( description_, function_, file_, line_ ) {}\
+		: frl::Exception( description_, function_, file_, line_ ) {}\
 	virtual ~xClass() throw() {}\
 }
 

@@ -6,14 +6,14 @@ namespace frl{
 
 // Return string length
 #if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-	size_t stringLength(const frl::Char *string )
+	size_t stringLength(const frl::Char* string )
 	{
 		if( string == NULL )
 			return 0;
 		return wcslen( string );
 	}
 #else // ! UNICODE	
-	size_t stringLength( const frl::Char *string)
+	size_t stringLength( const frl::Char* string)
 	{
 		if( string == NULL )
 			return 0;
@@ -22,13 +22,13 @@ namespace frl{
 #endif
 
 // Return string length
-size_t stringLength( const frl::String &string )
+size_t stringLength( const frl::String& string )
 {
 	return string.length();
 }
 
 // Converting string to wstring
-std::wstring string2wstring( const std::string &str )
+std::wstring string2wstring( const std::string& str )
 {
 	std::wstring wstr;
 	wstr.resize( str.size() );
@@ -37,7 +37,7 @@ std::wstring string2wstring( const std::string &str )
 }
 
 // Converting wstring to string
-std::string wstring2string( const std::wstring &wstr )
+std::string wstring2string( const std::wstring& wstr )
 {
 	std::string str;
 	str.resize( wstr.size() );
@@ -56,17 +56,17 @@ std::wstring unicodeCompatibility( const std::string& str )
 }
 
 // Always return multibyte string
-std::string multiByteCompatibility( const std::string &str )
+std::string multiByteCompatibility( const std::string& str )
 {
 	return str;		
 }
 
-std::string multiByteCompatibility( const std::wstring &str )
+std::string multiByteCompatibility( const std::wstring& str )
 {
 	return wstring2string( str );
 }
 
-Bool removeSymbolsFromStart( String &string, Char symbol)
+Bool removeSymbolsFromStart( String& string, Char symbol)
 {
 	if ( string.empty() )
 		return False;
@@ -84,41 +84,41 @@ Bool removeSymbolsFromStart( String &string, Char symbol)
 	return True;
 }
 
-Bool removeSymbolsFromEnd( String &string, Char symbol )
+Bool removeSymbolsFromEnd( String& str, Char symbol )
 {
-	if ( string.empty() )
+	if ( str.empty() )
 		return False;
 
-	size_t length = string.length() -1 ;
+	size_t length = str.length() -1 ;
 	size_t i = length;
 	while ( i > 0 )
 	{
-		if ( string[i] == symbol )
+		if ( str[i] == symbol )
 			--i;
 		else
 			break;
 	}
-	boost::algorithm::erase_tail( string, length - i );
+	boost::algorithm::erase_tail( str, length - i );
 	return True;
 }
 
-Bool removeSymbols( String &string, Char symbol )
+Bool removeSymbols( String& str, Char symbol )
 {
-	if ( string.empty() )
+	if ( str.empty() )
 		return False;
 	String tmp;
-	for( size_t i =0; i < string.length(); ++i )
+	for( size_t i =0; i < str.length(); ++i )
 	{
-		if( string[ i ] != symbol )
-			tmp += string[ i ];
+		if( str[ i ] != symbol )
+			tmp += str[ i ];
 	}
-	string = tmp;
+	str = tmp;
 	return True;
 }
 
-size_t getCountsSymbol( const String &string, Char symbol, size_t fromPos_ /*= 0*/, size_t toPos_ /*= 0 */ )
+size_t getCountsSymbol( const String& str, Char symbol, size_t fromPos_ /*= 0*/, size_t toPos_ /*= 0 */ )
 {
-	if( toPos_ >= string.length() )
+	if( toPos_ >= str.length() )
 		return String::npos;
 
 	if( fromPos_ > toPos_ )
@@ -130,9 +130,9 @@ size_t getCountsSymbol( const String &string, Char symbol, size_t fromPos_ /*= 0
 	size_t counts = 0;
 	if( ( toPos_ == fromPos_ ) && ( fromPos_ == 0 ) )
 	{
-		for( size_t i= 0; i < string.length(); ++i )
+		for( size_t i= 0; i < str.length(); ++i )
 		{
-			if( string[i] == symbol )
+			if( str[i] == symbol )
 				++counts;
 		}
 	}
@@ -140,11 +140,29 @@ size_t getCountsSymbol( const String &string, Char symbol, size_t fromPos_ /*= 0
 	{
 		for( size_t i = fromPos_; i < toPos_; ++i )
 		{
-			if( string[i] == symbol )
+			if( str[i] == symbol )
 				++counts;
 		}
 	}
 	return counts;
+}
+
+frl::String similarCompatibility( const std::string& str )
+{
+	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
+		return string2wstring( str );
+	#else
+		return str;
+	#endif
+}
+
+frl::String similarCompatibility( const std::wstring& str )
+{
+	#if( FRL_CHARACTER == FRL_CHARACTER_MULTIBYTE )
+		return wstring2string( str );
+	#else
+		return str;
+	#endif
 }
 
 } // FatRat Library

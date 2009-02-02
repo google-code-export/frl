@@ -7,22 +7,26 @@
 namespace frl{
 
 // Return string length
-size_t stringLength(const frl::Char *str );
-size_t stringLength( const frl::String &string );
+size_t stringLength(const frl::Char* str );
+size_t stringLength( const frl::String& string );
 
 // Converting string to wstring
-std::wstring string2wstring( const std::string &str );
+std::wstring string2wstring( const std::string& str );
 
 // Converting wstring to string
-std::string wstring2string( const std::wstring &wstr );
+std::string wstring2string( const std::wstring& wstr );
 
 // Always return wstring
 std::wstring unicodeCompatibility( const std::wstring& str );
 std::wstring unicodeCompatibility( const std::string& str );
 
-// Always return multibyte string
-std::string multiByteCompatibility( const std::string &str );
-std::string multiByteCompatibility( const std::wstring &str );
+// Always return multi byte string
+std::string multiByteCompatibility( const std::string& str );
+std::string multiByteCompatibility( const std::wstring& str );
+
+// Always return String == FRL_CHARACTER
+String similarCompatibility( const std::string& str );
+String similarCompatibility( const std::wstring& str );
 
 // Convert number to string
 template < class T >
@@ -49,10 +53,10 @@ String hexNumber2String( T number )
 	return ss.str();
 }
 
-Bool removeSymbolsFromStart( String &string, Char symbol );	
-Bool removeSymbolsFromEnd( String &string, Char symbol );
-Bool removeSymbols( String &string, Char symbol );
-size_t getCountsSymbol( const String &string, Char symbol, size_t fromPos_ = 0, size_t toPos_ = 0 );
+Bool removeSymbolsFromStart( String& str, Char symbol );	
+Bool removeSymbolsFromEnd( String& str, Char symbol );
+Bool removeSymbols( String& str, Char symbol );
+size_t getCountsSymbol( const String& str, Char symbol, size_t fromPos_ = 0, size_t toPos_ = 0 );
 
 } // FatRat Library
 
