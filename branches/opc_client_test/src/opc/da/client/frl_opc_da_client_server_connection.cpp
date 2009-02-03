@@ -1,5 +1,6 @@
 #include "opc/da/client/frl_opc_da_client_server_connection.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
+#include <boost/foreach.hpp>
 #include "os/win32/com/frl_os_win32_com_allocator.h"
 #include "opc/frl_opc_util.h"
 #include "opc/da/client/frl_opc_da_client_async_io_2_group.h"
@@ -13,6 +14,11 @@ ServerConnection::ServerConnection( const String& server_id_, const String& host
 
 ServerConnection::~ServerConnection()
 {
+	if( is_connected )
+	{
+		disconnect();
+	}
+
 }
 
 void ServerConnection::connect()
@@ -36,6 +42,19 @@ void ServerConnection::connect()
 		connectToRemoteServer( server_clsid );
 	}// end trying connection
 	is_connected = True;
+}
+
+void ServerConnection::disconnect()
+{
+	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
+	if( ! isConnected() )
+		FRL_THROW_S_CLASS( NotConnected );
+
+	BOOST_FOREACH( GroupElemPair gr, group_list )
+	{
+		gr.second->removeGroup( False );
+	}
 }
 
 frl::Bool ServerConnection::isConnected()
@@ -234,6 +253,7 @@ void ServerConnection::checkIsConnect()
 	if( ! isConnected() )
 		FRL_THROW_S_CLASS( NotConnected );
 }
+
 } // namespace client
 } // namespace da
 } // namespace opc
