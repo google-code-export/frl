@@ -39,15 +39,10 @@ STDMETHODIMP BrowseServerAddressSpace::ChangeBrowsePosition(
 			if( szString == NULL || wcslen( szString ) == 0 )
 				return E_INVALIDARG;
 
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				String inString = szString;
-			#else
-				String inString = wstring2string( szString );
-			#endif
-
+			String str = similarCompatibility( szString );
 			try
 			{
-				crawler.goDown( inString );
+				crawler.goDown( str );
 			}
 			catch( frl::Exception& )
 			{
@@ -64,15 +59,10 @@ STDMETHODIMP BrowseServerAddressSpace::ChangeBrowsePosition(
 				return S_OK;
 			}
 
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				String inString = szString;
-			#else
-				String inString = wstring2string( szString );
-			#endif
-
+			String str = similarCompatibility( szString );
 			try
 			{
-				crawler.goTo( inString );
+				crawler.goTo( str );
 			}
 			catch( frl::Exception& )
 			{
@@ -127,12 +117,8 @@ STDMETHODIMP BrowseServerAddressSpace::BrowseOPCItemIDs(
 
 	// filtration by name
 	if( szFilterCriteria != NULL && wcslen( szFilterCriteria ) != 0 )
-	{			
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			String filter = szFilterCriteria;
-		#else
-			String filter = wstring2string( szFilterCriteria );
-		#endif
+	{
+		String filter = similarCompatibility( szFilterCriteria );
 		std::vector< String > filtredItems;
 		filtredItems.reserve( items.size() );
 		BOOST_FOREACH( String& el, items )
@@ -163,12 +149,7 @@ STDMETHODIMP BrowseServerAddressSpace::GetItemID(
 		return E_INVALIDARG;
 
 	*szItemID = NULL;
-
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String itemDataID = szItemDataID;
-	#else
-		String itemDataID = wstring2string( szItemDataID );
-	#endif
+	String itemDataID = similarCompatibility( szItemDataID );
 
 	boost::mutex::scoped_lock guard( bsaScopeGuard );
 
@@ -181,11 +162,7 @@ STDMETHODIMP BrowseServerAddressSpace::GetItemID(
 		}
 		else
 		{
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				*szItemID = util::duplicateString( tmp ); // return current position
-			#else
-				*szItemID = util::duplicateString( string2wstring( tmp ) ); // return current position
-			#endif
+			*szItemID = util::duplicateString( unicodeCompatibility( tmp ) );
 		}
 		return S_OK;
 	}
@@ -204,13 +181,8 @@ STDMETHODIMP BrowseServerAddressSpace::GetItemID(
 			return E_INVALIDARG;
 		tag = opcAddressSpace::getInstance().getTag( itemDataID );
 	}
-
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		*szItemID = util::duplicateString( tag->getID() );
-	#else
-		*szItemID = util::duplicateString( string2wstring(tag->getID()) );
-	#endif
-
+	
+	*szItemID = util::duplicateString( unicodeCompatibility( tag->getID() ) );
 	return S_OK;
 }
 

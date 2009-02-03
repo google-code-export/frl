@@ -25,18 +25,11 @@ GroupItem::~GroupItem()
 void GroupItem::Init( OPCITEMDEF &itemDef )
 {
 	clientHandle = itemDef.hClient;
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		if( itemDef.szItemID )
-			itemID = itemDef.szItemID;
-		if( itemDef.szAccessPath )
-			accessPath = itemDef.szAccessPath;
-	#else
-		if( itemDef.szItemID )
-			itemID = wstring2string( itemDef.szItemID );
-		if( itemDef.szAccessPath )
-			accessPath = wstring2string( itemDef.szAccessPath );
-	#endif
-	
+	if( itemDef.szItemID )
+		itemID = similarCompatibility( itemDef.szItemID );
+	if( itemDef.szAccessPath )
+		accessPath = similarCompatibility( itemDef.szAccessPath );
+
 	actived = ( itemDef.bActive == TRUE || itemDef.bActive == VARIANT_TRUE );
 	requestDataType = itemDef.vtRequestedDataType;
 }

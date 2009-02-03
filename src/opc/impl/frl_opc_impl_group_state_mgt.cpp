@@ -15,13 +15,8 @@ STDMETHODIMP GroupStateMgt::GetState( /* [out] */ DWORD *pUpdateRate, /* [out] *
 {
 	if( deleted )
 		return E_FAIL;
-
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		*ppName = util::duplicateString( name );
-	#else
-		*ppName = util::duplicateString( string2wstring( name ) );
-	#endif
-
+	
+	*ppName = util::duplicateString( unicodeCompatibility( name ) );
 	*pActive = actived;
 	*pUpdateRate = updateRate;
 	*phServerGroup = getServerHandle();
@@ -123,12 +118,7 @@ STDMETHODIMP GroupStateMgt::SetName( /* [string][in] */ LPCWSTR szName )
 	if( szName == NULL || wcslen( szName ) == 0 )
 		return E_INVALIDARG;
 
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String new_name = szName;
-	#else
-		String new_name = wstring2string( szName );
-	#endif
-
+	String new_name = similarCompatibility( szName );
 	HRESULT res = server->setGroupName( name, new_name );
 	if( FAILED( res ) )
 		return res;
@@ -151,11 +141,7 @@ STDMETHODIMP GroupStateMgt::CloneGroup( /* [string][in] */ LPCWSTR szName, /* [i
 	}
 	else
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			new_name = szName;
-		#else
-			new_name = wstring2string( szName );
-		#endif
+		new_name = similarCompatibility( szName );
 	}
 
 	GroupElem group;

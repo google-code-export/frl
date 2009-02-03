@@ -35,7 +35,7 @@ void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> 
 	frl::ComPtr< ICatInformation > cat_info;
 	HRESULT result = CoCreateInstance( CLSID_StdComponentCategoriesMgr, NULL, CLSCTX_INPROC_SERVER, IID_ICatInformation, (void **)&cat_info );
 	if (FAILED(result))
-		FRL_THROW_SYSAPI();
+		FRL_THROW_SYSAPI_CODE( result );
 
 	frl::ComPtr<IEnumCLSID> enum_clsid;
 	CATID cat_list[1];
@@ -50,15 +50,11 @@ void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> 
 		HRESULT res = ProgIDFromCLSID( glist, &progID );
 		if(FAILED(res))
 		{
-			FRL_THROW_SYSAPI();
+			FRL_THROW_SYSAPI_CODE( res );
 		}
 		else 
 		{
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				to_list.push_back( progID );
-			#else
-				to_list.push_back( wstring2string( progID ) );
-			#endif
+			to_list.push_back( similarCompatibility( progID ) );
 		}
 	}
 }

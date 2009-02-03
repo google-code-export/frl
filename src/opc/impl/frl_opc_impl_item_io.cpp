@@ -52,15 +52,10 @@ STDMETHODIMP OPCItemIO::Read(
 	String itemID;
 	for( DWORD i = 0; i < dwCount; ++i )
 	{
+		if( pszItemIDs[i] )
+			itemID = similarCompatibility( pszItemIDs[i] );
 		try
 		{
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				if( pszItemIDs[i] )
-					itemID = pszItemIDs[i];
-			#else
-				if( pszItemIDs[i] )
-					itemID = wstring2string( pszItemIDs[i] );
-			#endif
 			item = opcAddressSpace::getInstance().getLeaf( itemID );
 		}
 		catch( frl::Exception& )
@@ -113,15 +108,10 @@ STDMETHODIMP OPCItemIO::WriteVQT(
 	String itemID;
 	for( DWORD i = 0; i < dwCount; ++i )
 	{
+		if( pszItemIDs[i] )
+			itemID = similarCompatibility( pszItemIDs[i] );
 		try
 		{
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				if( pszItemIDs[i] )
-					itemID = pszItemIDs[i];
-			#else
-				if( pszItemIDs[i] )
-					itemID = wstring2string( pszItemIDs[i] );
-			#endif
 			item = opcAddressSpace::getInstance().getLeaf( itemID );
 		}
 		catch( frl::Exception& )

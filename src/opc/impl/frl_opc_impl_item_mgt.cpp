@@ -54,12 +54,7 @@ STDMETHODIMP ItemMgt::AddItems(
 			continue;
 		}
 
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			String itemID = pItemArray[i].szItemID;
-		#else
-			String itemID = wstring2string( pItemArray[i].szItemID );
-		#endif
-
+		String itemID = similarCompatibility( pItemArray[i].szItemID );
 		if( ! opcAddressSpace::getInstance().isExistLeaf( itemID ) )
 		{
 			(*ppErrors)[i] = OPC_E_UNKNOWNITEMID;
@@ -131,12 +126,7 @@ STDMETHODIMP ItemMgt::ValidateItems(
 			continue;
 		}
 
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			itemID = pItemArray[i].szItemID;
-		#else
-			itemID = wstring2string( pItemArray[i].szItemID );
-		#endif
-
+		itemID = similarCompatibility( pItemArray[i].szItemID );
 		if( ! opcAddressSpace::getInstance().isExistLeaf( itemID ) )
 		{
 			(*ppErrors)[i] = OPC_E_UNKNOWNITEMID;

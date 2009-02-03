@@ -37,12 +37,7 @@ STDMETHODIMP OPCItemProperties::QueryAvailableProperties(
 	if( wcslen( szItemID ) == 0 )
 		return OPC_E_INVALIDITEMID;
 
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String itemID = szItemID;
-	#else
-		String itemID = wstring2string( szItemID );
-	#endif
-
+	String itemID = similarCompatibility( szItemID );
 	if( opcAddressSpace::getInstance().isExistBranch( itemID ) )
 		return S_OK;
 
@@ -110,12 +105,7 @@ STDMETHODIMP OPCItemProperties::GetItemProperties(
 	if( wcslen( szItemID ) == 0 )
 		return OPC_E_INVALIDITEMID;
 
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String itemID = szItemID;
-	#else
-		String itemID = wstring2string( szItemID );
-	#endif
-
+	String itemID = similarCompatibility( szItemID );
 	address_space::Tag *item = NULL;
 	try
 	{
@@ -167,12 +157,7 @@ STDMETHODIMP OPCItemProperties::LookupItemIDs(
 	if( wcslen( szItemID ) == 0 )
 		return OPC_E_INVALIDITEMID;
 
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String itemID = szItemID;
-	#else
-		String itemID = wstring2string( szItemID );
-	#endif
-
+	String itemID = similarCompatibility( szItemID );
 	address_space::Tag *item = NULL;
 	try
 	{

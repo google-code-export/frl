@@ -71,12 +71,7 @@ STDMETHODIMP OPCCommon::GetErrorString( /* [in] */ HRESULT dwError, /* [string][
 
 STDMETHODIMP OPCCommon::SetClientName( /* [string][in] */ LPCWSTR szName )
 {
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		clientName = szName;
-	#else
-		clientName = wstring2string( szName );
-	#endif
-
+	clientName = similarCompatibility( szName );
 	return S_OK;
 }
 

@@ -84,12 +84,7 @@ void ServerConnection::connectToRemoteServer( CLSID server_clsid )
 	COSERVERINFO server_info;
 	os::win32::com::zeroMemory( &server_info );
 
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE  )
-		server_info.pwszName = util::duplicateString( host_name );
-	#else
-		server_info.pwszName = util::duplicateString( string2wstring( host_name ) );
-	#endif
-
+	server_info.pwszName = util::duplicateString( unicodeCompatibility( host_name ) );
 	// setup requested interfaces
 	MULTI_QI mq_result;
 	os::win32::com::zeroMemory( &mq_result );
@@ -124,17 +119,17 @@ CLSID ServerConnection::getCLSID()
 	FRL_EXCEPT_GUARD();
 	CLSID server_clsid = GUID_NULL;
 	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-	if( FAILED(CLSIDFromProgID( server_id.c_str(), &server_clsid)) )
-	{
-		if( UuidFromString( (unsigned short*)server_id.c_str(), &server_clsid) != RPC_S_OK )
-			FRL_THROW_S_CLASS( NotResolveProgID );
-	}
+		if( FAILED(CLSIDFromProgID( server_id.c_str(), &server_clsid)) )
+		{
+			if( UuidFromString( (unsigned short*)server_id.c_str(), &server_clsid) != RPC_S_OK )
+				FRL_THROW_S_CLASS( NotResolveProgID );
+		}
 	#else
-	if( FAILED(CLSIDFromProgID( string2wstring( server_id ).c_str(), &server_clsid)) )
-	{
-		if( UuidFromString( (unsigned char*)server_id.c_str(), &server_clsid) != RPC_S_OK )
-			FRL_THROW_S_CLASS( NotResolveProgID );
-	}	
+		if( FAILED(CLSIDFromProgID( string2wstring( server_id ).c_str(), &server_clsid)) )
+		{
+			if( UuidFromString( (unsigned char*)server_id.c_str(), &server_clsid) != RPC_S_OK )
+				FRL_THROW_S_CLASS( NotResolveProgID );
+		}	
 	#endif // FRL_CHARACTER_UNICODE
 	return server_clsid;
 }

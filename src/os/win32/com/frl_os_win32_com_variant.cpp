@@ -315,11 +315,7 @@ Variant& Variant::operator=( const frl::String& rVal )
 {
 	clear();
 	value.vt = VT_BSTR;
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-	value.bstrVal = SysAllocString( rVal.c_str() );
-	#else
-	value.bstrVal = SysAllocString( string2wstring( rVal ).c_str() );
-	#endif
+	value.bstrVal = SysAllocString( unicodeCompatibility( rVal ).c_str() );
 	return *this;
 }
 
@@ -465,11 +461,7 @@ Variant::operator String() const
 	FRL_EXCEPT_GUARD();
 	if( value.vt != VT_BSTR )
 		FRL_THROW_S();
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		return value.bstrVal;
-	#else
-		return wstring2string( value.bstrVal );
-	#endif
+	return similarCompatibility( value.bstrVal );
 }
 
 Variant::operator const VARIANT&() const

@@ -83,11 +83,7 @@ STDMETHODIMP EnumString::Next( ULONG celt, LPOLESTR* rgelt, ULONG* pceltFetched 
 		}
 		else
 		{
-			#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-				rgelt[j] = util::duplicateString( strings[i] );
-			#else
-				rgelt[j] = util::duplicateString( string2wstring( strings[i] ) );
-			#endif
+			rgelt[j] = util::duplicateString( unicodeCompatibility( strings[i] ) );
 		}
 		if( pceltFetched )
 			++(*pceltFetched);
