@@ -5,11 +5,7 @@
 
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd )
 {
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		frl::String cmd_line = frl::string2wstring( lpCmdLine );
-	#else
-		frl::String cmd_line = lpCmdLine;
-	#endif
+	frl::String cmd_line = similarCompatibility( lpCmdLine );
 
 	if( util::lineHelper( cmd_line ) )
 		return 0;

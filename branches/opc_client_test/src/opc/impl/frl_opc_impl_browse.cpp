@@ -42,11 +42,7 @@ STDMETHODIMP BrowseImpl::GetProperties(
 			continue;
 		}
 
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			String itemID = pszItemIDs[i];
-		#else
-			String itemID = wstring2string( pszItemIDs[i] );
-		#endif
+		String itemID = similarCompatibility( pszItemIDs[i] );
 
 		try
 		{
@@ -145,11 +141,7 @@ STDMETHODIMP BrowseImpl::Browse(
 	}
 	else
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			String itemID = szItemID;
-		#else
-			String itemID = wstring2string( szItemID );
-		#endif
+		String itemID = similarCompatibility( szItemID );
 
 		try
 		{
@@ -164,11 +156,7 @@ STDMETHODIMP BrowseImpl::Browse(
 	String cp;
 	if( *pszContinuationPoint != NULL && wcslen( *pszContinuationPoint ) != 0 )
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			cp = *pszContinuationPoint;
-		#else
-			cp = wstring2string( *pszContinuationPoint );
-		#endif
+		cp = similarCompatibility( *pszContinuationPoint );
 		if( ! opcAddressSpace::getInstance().isExistTag( cp ) )
 			return OPC_E_INVALIDCONTINUATIONPOINT;
 	}
@@ -214,11 +202,8 @@ STDMETHODIMP BrowseImpl::Browse(
 	{
 		std::vector< address_space::TagBrowseInfo > filtredItems;
 		filtredItems.reserve( itemsList.size() );
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			String filter = szElementNameFilter;
-		#else
-			String filter = wstring2string( szElementNameFilter );
-		#endif
+		String filter = similarCompatibility( szElementNameFilter );
+
 		BOOST_FOREACH( address_space::TagBrowseInfo& el, itemsList )
 		{
 			if( util::matchStringPattern( el.shortID, filter ) )
@@ -233,23 +218,14 @@ STDMETHODIMP BrowseImpl::Browse(
 	if( dwMaxElementsReturned != 0
 		&& ( dwMaxElementsReturned < (DWORD)itemsList.size() ) )
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			*pszContinuationPoint = util::duplicateString( itemsList[dwMaxElementsReturned].fullID );
-		#else
-			*pszContinuationPoint = util::duplicateString( string2wstring( itemsList[dwMaxElementsReturned].fullID ) );
-		#endif
-
+		*pszContinuationPoint = util::duplicateString( unicodeCompatibility( itemsList[dwMaxElementsReturned].fullID ) );
 		std::vector< address_space::TagBrowseInfo > tmp( dwMaxElementsReturned );
 		tmp.assign( itemsList.begin(), itemsList.begin() + dwMaxElementsReturned );
 		itemsList.swap( tmp );			
 	}
 	else
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			*pszContinuationPoint = util::duplicateString( FRL_STR("") );
-		#else
-			*pszContinuationPoint = util::duplicateString( string2wstring( FRL_STR("") ) );
-		#endif
+		*pszContinuationPoint = util::duplicateString( unicodeCompatibility( FRL_STR("") ) );
 	}
 
 	size_t size = itemsList.size();
@@ -259,13 +235,8 @@ STDMETHODIMP BrowseImpl::Browse(
 
 	for( size_t i = 0; i < size; ++i )
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			(*ppBrowseElements)[i].szName = util::duplicateString( itemsList[i].shortID );
-			(*ppBrowseElements)[i].szItemID = util::duplicateString( itemsList[i].fullID );
-		#else
-			(*ppBrowseElements)[i].szName = util::duplicateString( string2wstring( itemsList[i].shortID ) );
-			(*ppBrowseElements)[i].szItemID = util::duplicateString( string2wstring( itemsList[i].fullID ) );
-		#endif
+		(*ppBrowseElements)[i].szName = util::duplicateString( unicodeCompatibility( itemsList[i].shortID ) );
+		(*ppBrowseElements)[i].szItemID = util::duplicateString( unicodeCompatibility( itemsList[i].fullID ) );
 
 		if( itemsList[i].isLeaf )
 			(*ppBrowseElements)[i].dwFlagValue = OPC_BROWSE_ISITEM;

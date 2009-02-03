@@ -84,22 +84,10 @@ ItemAttributes& ItemAttributes::operator=( const std::pair< OPCHANDLE, GroupItem
 	os::win32::com::zeroMemory( attributes );
 
 	attributes->hServer = newItem.first;
-
 	attributes->bActive = newItem.second->isActived();
 	attributes->hClient = newItem.second->getClientHandle();
-
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		attributes->szItemID = util::duplicateString( newItem.second->getItemID() );
-	#else
-		attributes->szItemID = util::duplicateString( string2wstring( newItem.second->getItemID() ) );
-	#endif
-
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		attributes->szAccessPath = util::duplicateString( newItem.second->getAccessPath() );
-	#else
-		attributes->szAccessPath = util::duplicateString( string2wstring( newItem.second->getAccessPath() ) );
-	#endif
-
+	attributes->szItemID = util::duplicateString( unicodeCompatibility( newItem.second->getItemID() ) );
+	attributes->szAccessPath = util::duplicateString( unicodeCompatibility( newItem.second->getAccessPath() ) );
 	address_space::Tag *item = opcAddressSpace::getInstance().getTag( newItem.second->getItemID() );
 	attributes->dwAccessRights = item->getAccessRights();
 	attributes->dwBlobSize = 0;

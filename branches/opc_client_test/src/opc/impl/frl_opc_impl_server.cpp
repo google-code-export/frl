@@ -62,11 +62,7 @@ STDMETHODIMP OPCServer::AddGroup(
 	}
 	else
 	{
-		#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-			name = szName;
-		#else
-			name = wstring2string( szName );
-		#endif
+		name = similarCompatibility( szName );
 	}
 
 	try
@@ -146,12 +142,7 @@ STDMETHODIMP OPCServer::GetGroupByName(
 
 	boost::mutex::scoped_lock guard( scopeGuard );
 
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String name = szName;
-	#else
-		String name = wstring2string( szName );
-	#endif
-
+	String name = similarCompatibility( szName );
 	GroupElem group;
 	try
 	{
