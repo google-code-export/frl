@@ -63,26 +63,17 @@ int main( int argc, char*argv[] )
 	console_std::Out << FRL_STR("Server status: ");
 	console_std::Out << test_client->getServerState() << std::endl;
 	
-	console_std::Out << FRL_STR("Support IID_IUnknown: ");
-	console_std::Out << test_client->isInterfaceSupported( IID_IUnknown ) << std::endl;
+	console_std::Out << FRL_STR("Server compliance OPC DA 1.0: ");
+	console_std::Out << test_client->testComplianceOPC_DA1() << std::endl;
 
-	console_std::Out << FRL_STR("Support IID_IOPCCommon: ");
-	console_std::Out << test_client->isInterfaceSupported( IID_IOPCCommon ) << std::endl;
+	console_std::Out << FRL_STR("Server compliance OPC DA 2.0: ");
+	console_std::Out << test_client->testComplianceOPC_DA2() << std::endl;
 
-	console_std::Out << FRL_STR("Support IID_IOPCServer: ");
-	console_std::Out << test_client->isInterfaceSupported( IID_IOPCServer ) << std::endl;
-
-	console_std::Out << FRL_STR("Support IID_IOPCBrowse: ");
-	console_std::Out << test_client->isInterfaceSupported( IID_IOPCBrowse ) << std::endl;
+	console_std::Out << FRL_STR("Server compliance OPC DA 3.0: ");
+	console_std::Out << test_client->testComplianceOPC_DA3() << std::endl;
 
 	console_std::Out << FRL_STR("Support IID_IOPCBrowseServerAddressSpace: ");
 	console_std::Out << test_client->isInterfaceSupported( IID_IOPCBrowseServerAddressSpace ) << std::endl;
-
-	console_std::Out << FRL_STR("Support IID_IOPCItemIO: ");
-	console_std::Out << test_client->isInterfaceSupported( IID_IOPCItemIO ) << std::endl;
-
-	console_std::Out << FRL_STR("Support IID_IOPCItemProperties: ");
-	console_std::Out << test_client->isInterfaceSupported( IID_IOPCItemProperties ) << std::endl;
 
 	opc::da::client::ServerConnectionPtr my_srv = localhost->getConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
 

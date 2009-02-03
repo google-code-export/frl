@@ -4,6 +4,7 @@
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "../dependency/vendors/opc_foundation/opccomn.h"
 #include "frl_smart_ptr.h"
@@ -23,6 +24,7 @@ private:
 	Bool is_connected;
 	String server_id;
 	String host_name;
+	boost::mutex scope_guard;
 
 	typedef std::pair< String, GroupElem > GroupElemPair;
 	typedef std::map< String, GroupElem > GroupList;
@@ -31,6 +33,7 @@ private:
 	void connectToRemoteServer( CLSID cClsid );
 	CLSID getCLSID();
 	void internalRemoveGroup( const String& name_, Bool force );
+	void checkIsConnect();
 public:
 	FRL_EXCEPTION_CLASS( AlreadyConnection );
 	FRL_EXCEPTION_CLASS( NotResolveProgID );
@@ -54,7 +57,9 @@ public:
 	GroupElem getGroup( const String& name );
 	void removeGroup( const String& name );
 	void removeGroupForce( const String& name );
-
+	Bool testComplianceOPC_DA1();
+	Bool testComplianceOPC_DA2();
+	Bool testComplianceOPC_DA3();
 }; // class ServerConnection
 
 typedef boost::shared_ptr< ServerConnection > ServerConnectionPtr;
