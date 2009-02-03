@@ -18,6 +18,7 @@ ServerConnection::~ServerConnection()
 void ServerConnection::connect()
 {
 	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
 	if( isConnected() )
 		FRL_THROW_S_CLASS( AlreadyConnection );
 
@@ -45,12 +46,12 @@ frl::Bool ServerConnection::isConnected()
 OPCSERVERSTATE ServerConnection::getServerState()
 {
 	FRL_EXCEPT_GUARD();
-	if( ! isConnected() )
-		FRL_THROW_S_CLASS( NotConnected );
+	checkIsConnect();
 
 	OPCSERVERSTATUS *status = NULL;
 	if( FAILED( server->GetStatus( &status ) ) )
 		FRL_THROW_S_CLASS( UnknownError );
+
 	OPCSERVERSTATE tmp = status->dwServerState;
 	os::win32::com::freeMemory( status->szVendorInfo );
 	os::win32::com::freeMemory( status );
@@ -59,8 +60,8 @@ OPCSERVERSTATE ServerConnection::getServerState()
 
 frl::Bool ServerConnection::isInterfaceSupported( const IID &iid )
 {
-	if( ! isConnected() )
-		FRL_THROW_S_CLASS( NotConnected );
+	checkIsConnect();
+	boost::mutex::scoped_lock guard( scope_guard );
 	IUnknown *tmp;
 	if( FAILED( server->QueryInterface( iid, (void**)&tmp ) ) )
 		return False;
@@ -136,6 +137,9 @@ CLSID ServerConnection::getCLSID()
 
 ServerConnection::GroupElem ServerConnection::addGroupAsyncIO2( const String& group_name )
 {
+	FRL_EXCEPT_GUARD();
+	checkIsConnect();
+	boost::mutex::scoped_lock guard( scope_guard );
 	AsyncIO2Group *new_gr = new AsyncIO2Group( group_name, server );
 	new_gr->create();
 	GroupElem new_group( new_gr );
@@ -147,6 +151,7 @@ ServerConnection::GroupElem ServerConnection::addGroupAsyncIO2( const String& gr
 ServerConnection::GroupElem ServerConnection::getGroup( const String& name )
 {
 	FRL_EXCEPT_GUARD();
+	checkIsConnect();
 	GroupList::iterator it = group_list.find( name );
 	if( it == group_list.end() )
 		FRL_THROW_S_CLASS( GroupNotExist );
@@ -162,12 +167,14 @@ void ServerConnection::removeGroup( const String& name_ )
 void ServerConnection::removeGroupForce( const String& name_ )
 {
 	FRL_EXCEPT_GUARD();
-	internalRemoveGroup( name_, False );
+	internalRemoveGroup( name_, True );
 }
 
 void ServerConnection::internalRemoveGroup( const String& name_, Bool force )
 {
 	FRL_EXCEPT_GUARD();
+	checkIsConnect();
+	boost::mutex::scoped_lock guard( scope_guard );
 	GroupList::iterator it = group_list.find( name_ );
 	if( it == group_list.end() )
 		FRL_THROW_S_CLASS( GroupNotExist );
@@ -175,6 +182,58 @@ void ServerConnection::internalRemoveGroup( const String& name_, Bool force )
 	group_list.erase( it );
 }
 
+
+frl::Bool ServerConnection::testComplianceOPC_DA1()
+{
+	FRL_EXCEPT_GUARD();
+	if( ! isInterfaceSupported( IID_IUnknown ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCServer ) )
+		return False;
+	return True;
+}
+
+frl::Bool ServerConnection::testComplianceOPC_DA2()
+{
+	FRL_EXCEPT_GUARD();
+	if( ! isInterfaceSupported( IID_IUnknown ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCServer ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCCommon ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IConnectionPointContainer ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCItemProperties ) )
+		return False;
+	return True;
+}
+
+frl::Bool ServerConnection::testComplianceOPC_DA3()
+{
+	FRL_EXCEPT_GUARD();
+	if( ! isInterfaceSupported( IID_IUnknown ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCServer ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCCommon ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IConnectionPointContainer ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCBrowse ) )
+		return False;
+	if( ! isInterfaceSupported( IID_IOPCItemIO ) )
+		return False;
+	return True;
+}
+
+void ServerConnection::checkIsConnect()
+{
+	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
+	if( ! isConnected() )
+		FRL_THROW_S_CLASS( NotConnected );
+}
 } // namespace client
 } // namespace da
 } // namespace opc
