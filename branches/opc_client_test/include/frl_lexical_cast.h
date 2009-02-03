@@ -9,7 +9,7 @@
 
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 #include <Windows.h>
-#include "frl_exception.h"
+#include "os/win32/frl_os_win32_exception.h"
 #endif // FRL_PLATFORM_WIN32
 
 namespace frl{
@@ -157,12 +157,8 @@ String lexicalCast( const GUID &from )
 	WCHAR* wszCLSID = NULL ;
 	HRESULT result = StringFromCLSID( from, &wszCLSID );
 	if( FAILED(result) )
-		FRL_THROW( FRL_STR("Can`t convert GUID to string") );
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		String toStr = wszCLSID;
-	#else
-		String toStr = multiByteCompatibility( wszCLSID );
-	#endif
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t convert GUID to string"), result );
+	String toStr = similarCompatibility( wszCLSID );
 	CoTaskMemFree(wszCLSID);
 	return toStr;
 }
@@ -173,14 +169,10 @@ inline
 GUID lexicalCast( const frl::String &from )
 {
 	CLSID clsid;
-	#if( FRL_CHARACTER == FRL_CHARACTER_UNICODE )
-		HRESULT result = CLSIDFromString( (wchar_t*)from.c_str(), &clsid );
-	#else
-		std::wstring tmp = unicodeCompatibility( from );
-		HRESULT result = CLSIDFromString( (wchar_t*)tmp.c_str(), &clsid );
-	#endif
+	std::wstring tmp = unicodeCompatibility( from );
+	HRESULT result = CLSIDFromString( (wchar_t*)tmp.c_str(), &clsid );
 	if( FAILED(result) )
-		FRL_THROW( FRL_STR("Can`t convert string to GUID") );
+		FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t convert string to GUID"), result );
 	return clsid;
 }
 
