@@ -26,8 +26,8 @@ private:
 	String host_name;
 	boost::mutex scope_guard;
 
-	typedef std::pair< String, GroupElem > GroupElemPair;
 	typedef std::map< String, GroupElem > GroupList;
+	typedef std::pair< String, GroupElem > GroupElemPair;
 	GroupList group_list;
 
 	void connectToRemoteServer( CLSID cClsid );
@@ -48,6 +48,7 @@ public:
 	~ServerConnection();
 
 	void connect();
+	void disconnect();
 	Bool isConnected();
 	OPCSERVERSTATE getServerState();
 	Bool isInterfaceSupported( const IID &iid );
