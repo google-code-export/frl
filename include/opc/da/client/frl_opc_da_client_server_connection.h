@@ -37,15 +37,15 @@ private:
 	void checkIsConnect();
 
 	template< class T >
-	void getInterface( ComPtr<T>& tmp )
+	void getInterface( ComPtr<T>& com_ptr )
 	{
 		boost::mutex::scoped_lock guard( scope_guard );
 		checkIsConnect();
-		//ComPtr< IUnknown > tmp;
+		ComPtr<T> tmp;
 		HRESULT result = server->QueryInterface( __uuidof( T ), (void**)&tmp );
 		if( FAILED( result ) )
 			FRL_THROW_OPC( result )
-		//return tmp;
+		com_ptr.swap( tmp );
 	}
 
 public:
