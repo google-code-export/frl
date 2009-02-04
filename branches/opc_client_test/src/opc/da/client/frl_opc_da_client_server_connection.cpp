@@ -66,7 +66,6 @@ frl::Bool ServerConnection::isConnected()
 OPCSERVERSTATE ServerConnection::getServerState()
 {
 	FRL_EXCEPT_GUARD();
-	checkIsConnect();
 	OPCSERVERSTATUS *status = getStatus();
 	OPCSERVERSTATE tmp = status->dwServerState;
 	os::win32::com::freeMemory( status->szVendorInfo );
@@ -77,6 +76,7 @@ OPCSERVERSTATE ServerConnection::getServerState()
 OPCSERVERSTATUS* ServerConnection::getStatus()
 {
 	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
 	checkIsConnect();
 	OPCSERVERSTATUS *status = NULL;
 	HRESULT result = server->GetStatus( &status );
@@ -85,10 +85,10 @@ OPCSERVERSTATUS* ServerConnection::getStatus()
 	return status;
 }
 
-frl::Bool ServerConnection::isInterfaceSupported( const IID &iid )
+Bool ServerConnection::isInterfaceSupported( const IID &iid )
 {
-	checkIsConnect();
 	boost::mutex::scoped_lock guard( scope_guard );
+	checkIsConnect();
 	IUnknown *tmp;
 	if( FAILED( server->QueryInterface( iid, (void**)&tmp ) ) )
 		return False;
@@ -165,8 +165,8 @@ CLSID ServerConnection::getCLSID()
 GroupPtr ServerConnection::addGroupAsyncIO2( const String& group_name )
 {
 	FRL_EXCEPT_GUARD();
-	checkIsConnect();
 	boost::mutex::scoped_lock guard( scope_guard );
+	checkIsConnect();
 	AsyncIO2Group *new_gr = new AsyncIO2Group( group_name, server );
 	new_gr->create();
 	GroupPtr new_group( new_gr );
@@ -178,6 +178,7 @@ GroupPtr ServerConnection::addGroupAsyncIO2( const String& group_name )
 GroupPtr ServerConnection::getGroupByName( const String& name )
 {
 	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
 	checkIsConnect();
 	GroupList::iterator it = group_list.find( name );
 	if( it == group_list.end() )
@@ -200,8 +201,8 @@ void ServerConnection::removeGroupForce( const String& name_ )
 void ServerConnection::internalRemoveGroup( const String& name_, Bool force )
 {
 	FRL_EXCEPT_GUARD();
-	checkIsConnect();
 	boost::mutex::scoped_lock guard( scope_guard );
+	checkIsConnect();
 	GroupList::iterator it = group_list.find( name_ );
 	if( it == group_list.end() )
 		FRL_THROW_S_CLASS( GroupNotExist );
@@ -256,7 +257,6 @@ frl::Bool ServerConnection::testComplianceOPC_DA3()
 void ServerConnection::checkIsConnect()
 {
 	FRL_EXCEPT_GUARD();
-	boost::mutex::scoped_lock guard( scope_guard );
 	if( ! isConnected() )
 		FRL_THROW_S_CLASS( NotConnected );
 }
@@ -272,6 +272,16 @@ std::vector< GroupPtr > ServerConnection::getGoupList()
 	return vec_tmp;
 }
 
+frl::String ServerConnection::getServerErrorString( HRESULT error_id )
+{
+	ComPtr<IOPCCommon> comm;
+	getInterface( comm );
+	LPWSTR str_tmp;
+	comm->GetErrorString( error_id, &str_tmp );
+	String ret_str = similarCompatibility( str_tmp );
+	os::win32::com::freeMemory( str_tmp );
+	return ret_str;
+}
 
 } // namespace client
 } // namespace da

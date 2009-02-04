@@ -35,6 +35,19 @@ private:
 	CLSID getCLSID();
 	void internalRemoveGroup( const String& name_, Bool force );
 	void checkIsConnect();
+
+	template< class T >
+	void getInterface( ComPtr<T>& tmp )
+	{
+		boost::mutex::scoped_lock guard( scope_guard );
+		checkIsConnect();
+		//ComPtr< IUnknown > tmp;
+		HRESULT result = server->QueryInterface( __uuidof( T ), (void**)&tmp );
+		if( FAILED( result ) )
+			FRL_THROW_OPC( result )
+		//return tmp;
+	}
+
 public:
 	FRL_EXCEPTION_CLASS( AlreadyConnection );
 	FRL_EXCEPTION_CLASS( NotResolveProgID );
@@ -53,6 +66,7 @@ public:
 	Bool isConnected();
 	OPCSERVERSTATE getServerState();
 	OPCSERVERSTATUS* getStatus();
+	String getServerErrorString( HRESULT error_id );
 	Bool isInterfaceSupported( const IID &iid );
 	const String& getServerID();
 	const String& getHostName();

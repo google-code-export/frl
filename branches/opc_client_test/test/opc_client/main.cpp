@@ -77,6 +77,8 @@ int main( int argc, char*argv[] )
 
 	opc::da::client::ServerConnectionPtr my_srv = localhost->getConnection( FRL_STR("Serg Baburin.SERVER_TEST.0.1") );
 
+	my_srv->getServerErrorString( 0 );
+
 	using namespace frl::opc::da::client;
 	my_srv->addGroupAsyncIO2( FRL_STR("test_group") );
 	try
