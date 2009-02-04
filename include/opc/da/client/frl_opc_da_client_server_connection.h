@@ -10,7 +10,7 @@
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "../dependency/vendors/opc_foundation/opccomn.h"
 #include "frl_smart_ptr.h"
-#include "frl_exception.h"
+#include "opc/frl_opc_exception.h"
 #include "opc/da/client/frl_opc_da_client_group_base.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
@@ -52,6 +52,7 @@ public:
 	void disconnect();
 	Bool isConnected();
 	OPCSERVERSTATE getServerState();
+	OPCSERVERSTATUS* getStatus();
 	Bool isInterfaceSupported( const IID &iid );
 	const String& getServerID();
 	const String& getHostName();

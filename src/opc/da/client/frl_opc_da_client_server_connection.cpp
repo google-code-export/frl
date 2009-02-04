@@ -67,15 +67,22 @@ OPCSERVERSTATE ServerConnection::getServerState()
 {
 	FRL_EXCEPT_GUARD();
 	checkIsConnect();
-
-	OPCSERVERSTATUS *status = NULL;
-	if( FAILED( server->GetStatus( &status ) ) )
-		FRL_THROW_S_CLASS( UnknownError );
-
+	OPCSERVERSTATUS *status = getStatus();
 	OPCSERVERSTATE tmp = status->dwServerState;
 	os::win32::com::freeMemory( status->szVendorInfo );
 	os::win32::com::freeMemory( status );
 	return tmp;
+}
+
+OPCSERVERSTATUS* ServerConnection::getStatus()
+{
+	FRL_EXCEPT_GUARD();
+	checkIsConnect();
+	OPCSERVERSTATUS *status = NULL;
+	HRESULT result = server->GetStatus( &status );
+	if( FAILED( result ) )
+		FRL_THROW_OPC( result );
+	return status;
 }
 
 frl::Bool ServerConnection::isInterfaceSupported( const IID &iid )
@@ -202,7 +209,6 @@ void ServerConnection::internalRemoveGroup( const String& name_, Bool force )
 	group_list.erase( it );
 }
 
-
 frl::Bool ServerConnection::testComplianceOPC_DA1()
 {
 	FRL_EXCEPT_GUARD();
@@ -265,6 +271,7 @@ std::vector< GroupPtr > ServerConnection::getGoupList()
 	std::transform( group_list.begin(), group_list.end(), vec_tmp.begin(), boost::mem_fn(&GroupList::value_type::second ) );
 	return vec_tmp;
 }
+
 
 } // namespace client
 } // namespace da
