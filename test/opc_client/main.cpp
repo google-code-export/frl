@@ -88,7 +88,8 @@ int main( int argc, char*argv[] )
 		ex.~Exception();
 	}
 
-	ServerConnection::GroupElem gr_ptr = my_srv->getGroup( FRL_STR("test_group") );
+	GroupPtr gr_ptr = my_srv->getGroupByName( FRL_STR("test_group") );
+	std::vector< GroupPtr > gr_list = my_srv->getGoupList();
 	my_srv->removeGroup( gr_ptr->getName() );
 	try
 	{

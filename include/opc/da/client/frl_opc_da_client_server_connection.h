@@ -5,29 +5,30 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
+#include <map>
+#include <vector>
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "../dependency/vendors/opc_foundation/opccomn.h"
 #include "frl_smart_ptr.h"
 #include "frl_exception.h"
-#include <map>
 #include "opc/da/client/frl_opc_da_client_group_base.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
 
 class ServerConnection : private boost::noncopyable
 {
-public:
-	typedef boost::shared_ptr< client::GroupBase > GroupElem;
-
 private:
 	ComPtr<IOPCServer> server;
+	ComPtr<IOPCCommon> common;
+	ComPtr<IOPCBrowse> browse;
+	ComPtr<IOPCItemIO> item_io;
 	Bool is_connected;
 	String server_id;
 	String host_name;
 	boost::mutex scope_guard;
 
-	typedef std::map< String, GroupElem > GroupList;
-	typedef std::pair< String, GroupElem > GroupElemPair;
+	typedef std::map< String, GroupPtr > GroupList;
+	typedef std::pair< String, GroupPtr > GroupElemPair;
 	GroupList group_list;
 
 	void connectToRemoteServer( CLSID cClsid );
@@ -54,10 +55,11 @@ public:
 	Bool isInterfaceSupported( const IID &iid );
 	const String& getServerID();
 	const String& getHostName();
-	GroupElem addGroupAsyncIO2( const String& group_name );
-	GroupElem getGroup( const String& name );
+	GroupPtr addGroupAsyncIO2( const String& group_name );
+	GroupPtr getGroupByName( const String& name );
 	void removeGroup( const String& name );
 	void removeGroupForce( const String& name );
+	std::vector< GroupPtr > getGoupList();
 	Bool testComplianceOPC_DA1();
 	Bool testComplianceOPC_DA2();
 	Bool testComplianceOPC_DA3();

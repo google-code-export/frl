@@ -1,6 +1,7 @@
 #include "opc/da/client/frl_opc_da_client_server_connection.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 #include <boost/foreach.hpp>
+#include <boost/mem_fn.hpp>
 #include "os/win32/com/frl_os_win32_com_allocator.h"
 #include "opc/frl_opc_util.h"
 #include "opc/da/client/frl_opc_da_client_async_io_2_group.h"
@@ -154,20 +155,20 @@ CLSID ServerConnection::getCLSID()
 	return server_clsid;
 }
 
-ServerConnection::GroupElem ServerConnection::addGroupAsyncIO2( const String& group_name )
+GroupPtr ServerConnection::addGroupAsyncIO2( const String& group_name )
 {
 	FRL_EXCEPT_GUARD();
 	checkIsConnect();
 	boost::mutex::scoped_lock guard( scope_guard );
 	AsyncIO2Group *new_gr = new AsyncIO2Group( group_name, server );
 	new_gr->create();
-	GroupElem new_group( new_gr );
+	GroupPtr new_group( new_gr );
 	GroupElemPair new_elem( group_name, new_group );
 	group_list.insert( new_elem );
 	return new_group; 
 }
 
-ServerConnection::GroupElem ServerConnection::getGroup( const String& name )
+GroupPtr ServerConnection::getGroupByName( const String& name )
 {
 	FRL_EXCEPT_GUARD();
 	checkIsConnect();
@@ -252,6 +253,17 @@ void ServerConnection::checkIsConnect()
 	boost::mutex::scoped_lock guard( scope_guard );
 	if( ! isConnected() )
 		FRL_THROW_S_CLASS( NotConnected );
+}
+
+std::vector< GroupPtr > ServerConnection::getGoupList()
+{
+	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
+	if( ! isConnected() )
+		FRL_THROW_S_CLASS( NotConnected );
+	std::vector<GroupPtr> vec_tmp( group_list.size() );
+	std::transform( group_list.begin(), group_list.end(), vec_tmp.begin(), boost::mem_fn(&GroupList::value_type::second ) );
+	return vec_tmp;
 }
 
 } // namespace client

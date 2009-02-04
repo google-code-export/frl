@@ -3,6 +3,7 @@
 #include "frl_platform.h"
 #if( FRL_PLATFORM == FRL_PLATFORM_WIN32 )
 #include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include "opc/da/client/frl_opc_da_client_group_info.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
@@ -25,6 +26,8 @@ public:
 	virtual ~GroupBase();
 	const String& getName();
 };
+
+typedef boost::shared_ptr< client::GroupBase > GroupPtr;
 
 } // namespace client
 } // namespace da
