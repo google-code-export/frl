@@ -167,6 +167,9 @@ GroupPtr ServerConnection::addGroupAsyncIO2( const String& group_name )
 	FRL_EXCEPT_GUARD();
 	boost::mutex::scoped_lock guard( scope_guard );
 	checkIsConnect();
+	GroupList::iterator it = group_list.find( group_name );
+	if( it != group_list.end() )
+		FRL_THROW_S_CLASS( GroupAlreadyExist );
 	AsyncIO2Group *new_gr = new AsyncIO2Group( group_name, server );
 	new_gr->create();
 	GroupPtr new_group( new_gr );
@@ -175,35 +178,35 @@ GroupPtr ServerConnection::addGroupAsyncIO2( const String& group_name )
 	return new_group; 
 }
 
-GroupPtr ServerConnection::getGroupByName( const String& name )
+GroupPtr ServerConnection::getGroupByName( const String& group_name )
 {
 	FRL_EXCEPT_GUARD();
 	boost::mutex::scoped_lock guard( scope_guard );
 	checkIsConnect();
-	GroupList::iterator it = group_list.find( name );
+	GroupList::iterator it = group_list.find( group_name );
 	if( it == group_list.end() )
 		FRL_THROW_S_CLASS( GroupNotExist );
 	return it->second;
 }
 
-void ServerConnection::removeGroup( const String& name_ )
+void ServerConnection::removeGroup( const String& group_name )
 {
 	FRL_EXCEPT_GUARD();
-	internalRemoveGroup( name_, False );
+	internalRemoveGroup( group_name, False );
 }
 
-void ServerConnection::removeGroupForce( const String& name_ )
+void ServerConnection::removeGroupForce( const String& group_name )
 {
 	FRL_EXCEPT_GUARD();
-	internalRemoveGroup( name_, True );
+	internalRemoveGroup( group_name, True );
 }
 
-void ServerConnection::internalRemoveGroup( const String& name_, Bool force )
+void ServerConnection::internalRemoveGroup( const String& group_name, Bool force )
 {
 	FRL_EXCEPT_GUARD();
 	boost::mutex::scoped_lock guard( scope_guard );
 	checkIsConnect();
-	GroupList::iterator it = group_list.find( name_ );
+	GroupList::iterator it = group_list.find( group_name );
 	if( it == group_list.end() )
 		FRL_THROW_S_CLASS( GroupNotExist );
 	it->second->removeGroup( force );

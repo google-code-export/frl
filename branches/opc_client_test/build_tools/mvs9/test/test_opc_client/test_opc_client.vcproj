@@ -187,6 +187,15 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="include"
+			Filter="h;hpp;hxx"
+			>
+			<File
+				RelativePath="..\..\..\..\test\opc_client\test_suite.hpp"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
