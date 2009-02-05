@@ -274,8 +274,8 @@ std::vector< GroupPtr > ServerConnection::getGoupList()
 
 frl::String ServerConnection::getServerErrorString( HRESULT error_id )
 {
-	ComPtr<IOPCCommon> comm;
-	getInterface( comm );
+	ComPtr<IOPCCommon> comm; 
+	getInterface( IID_IOPCCommon, comm );
 	LPWSTR str_tmp;
 	comm->GetErrorString( error_id, &str_tmp );
 	String ret_str = similarCompatibility( str_tmp );
