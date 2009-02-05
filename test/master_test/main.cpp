@@ -5,3 +5,4 @@
 #include "../lexical_cast/test_suite.hpp"
 #include "../smart_ptr/test_suite.hpp"
 #include "../poor_xml/test_suite.hpp"
+#include "../opc_client/test_suite.hpp"
