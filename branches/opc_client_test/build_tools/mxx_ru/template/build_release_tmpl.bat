@@ -14,5 +14,6 @@ ruby frl.test.smart_ptr.release.rb
 ruby frl.test.psoi2_sender.debug.rb
 ruby frl.test.master_test.release.rb
 ruby frl.examples.opc_server.release.rb
+ruby frl.examples.opc_client.release.rb
 ruby frl.projects.psoi2.release.rb
 cd ..
