@@ -7,6 +7,7 @@
 
 namespace frl { namespace opc { namespace impl {
 
+// IOPCBrowse implementation
 class BrowseImpl
 	:	public IOPCBrowse,
 		virtual public opc::OPCServerBase
@@ -14,7 +15,6 @@ class BrowseImpl
 public:
 	virtual ~BrowseImpl();
 
-	// IOPCBrowse implementation
 	STDMETHODIMP GetProperties( 
 		/* [in] */ DWORD dwItemCount,
 		/* [size_is][string][in] */ LPWSTR *pszItemIDs,

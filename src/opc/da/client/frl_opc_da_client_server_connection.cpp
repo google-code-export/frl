@@ -277,6 +277,9 @@ std::vector< GroupPtr > ServerConnection::getGoupList()
 
 frl::String ServerConnection::getServerErrorString( HRESULT error_id )
 {
+	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
+	checkIsConnect();
 	ComPtr<IOPCCommon> comm; 
 	getInterface( IID_IOPCCommon, comm );
 	LPWSTR str_tmp;
@@ -284,6 +287,64 @@ frl::String ServerConnection::getServerErrorString( HRESULT error_id )
 	String ret_str = similarCompatibility( str_tmp );
 	os::win32::com::freeMemory( str_tmp );
 	return ret_str;
+}
+
+std::vector< String > ServerConnection::getBranchesList( const String& from_branch,
+																					const String& name_filter,
+																					const String& vendor_filter )
+{
+	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
+	return getItemsList( OPC_BROWSE_FILTER_BRANCHES, from_branch, name_filter, vendor_filter );
+}
+
+std::vector< String > ServerConnection::getLeafsList( const String& from_branch,
+																			const String& name_filter,
+																			const String& vendor_filter )
+{
+	FRL_EXCEPT_GUARD();
+	boost::mutex::scoped_lock guard( scope_guard );
+	return getItemsList( OPC_BROWSE_FILTER_ITEMS, from_branch, name_filter, vendor_filter );
+}
+
+std::vector< String > ServerConnection::getItemsList( OPCBROWSEFILTER type, const String& from_branch, const String& name_filter, const String& vendor_filter )
+{
+	FRL_EXCEPT_GUARD();
+	checkIsConnect();
+	ComPtr<IOPCBrowse> br_ptr;
+	getInterface( IID_IOPCBrowse, br_ptr );
+	LPWSTR item_id = util::duplicateString( unicodeCompatibility( from_branch ) );
+	LPWSTR cont_pint = NULL;
+	LPWSTR name_filter_str = util::duplicateString( unicodeCompatibility( name_filter ) );
+	LPWSTR vendor_filter_str = util::duplicateString( unicodeCompatibility( vendor_filter ) );
+	DWORD *property_ids = os::win32::com::allocMemory<DWORD>();
+	DWORD count;
+	OPCBROWSEELEMENT *browse_elements;
+	BOOL m = FALSE;
+	HRESULT val = br_ptr->Browse( item_id, &cont_pint, 0, type, name_filter_str, vendor_filter_str, FALSE, FALSE, 0, property_ids, &m, &count, &browse_elements );
+	if( FAILED( val ) )
+	{
+		os::win32::com::freeMemory( property_ids );
+		os::win32::com::freeMemory( item_id );
+		os::win32::com::freeMemory( name_filter_str );
+		os::win32::com::freeMemory( vendor_filter_str );
+		FRL_THROW_OPC( val );
+	}
+
+	std::vector< String > ret_vec( count );
+	for( DWORD i = 0; i < count; ++i )
+	{
+		ret_vec[i] = similarCompatibility( browse_elements[i].szName );
+		os::win32::com::freeMemory( browse_elements[i].szName );
+		os::win32::com::freeMemory( browse_elements[i].szItemID );
+		os::win32::com::freeMemory( browse_elements[i].ItemProperties.pItemProperties );
+	}
+	os::win32::com::freeMemory( property_ids );
+	os::win32::com::freeMemory( item_id );
+	os::win32::com::freeMemory( name_filter_str );
+	os::win32::com::freeMemory( vendor_filter_str );
+	os::win32::com::freeMemory( browse_elements );
+	return ret_vec;
 }
 
 } // namespace client

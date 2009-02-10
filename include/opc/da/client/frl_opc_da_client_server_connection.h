@@ -39,8 +39,6 @@ private:
 	template< class T >
 	void getInterface( const IID& inerface_, ComPtr<T>& ptr )
 	{
-		boost::mutex::scoped_lock guard( scope_guard );
-		checkIsConnect();
 		ComPtr<T> tmp;
 		HRESULT result = server->QueryInterface( inerface_, (void**)&tmp );
 		if( FAILED( result ) )
@@ -48,6 +46,10 @@ private:
 		ptr.swap( tmp );
 	}
 
+	std::vector< String > getItemsList( OPCBROWSEFILTER type,
+													const String& from_branch,
+													const String& name_filter,
+													const String& vendor_filter);
 public:
 	FRL_EXCEPTION_CLASS( AlreadyConnection );
 	FRL_EXCEPTION_CLASS( NotResolveProgID );
@@ -78,6 +80,12 @@ public:
 	Bool testComplianceOPC_DA1();
 	Bool testComplianceOPC_DA2();
 	Bool testComplianceOPC_DA3();
+	std::vector< String > getBranchesList( const String& from_branch = FRL_STR(""),
+															const String& name_filter = FRL_STR(""),
+															const String& vendor_filter = FRL_STR("") );
+	std::vector< String > getLeafsList( const String& from_branch = FRL_STR(""),
+													const String& name_filter = FRL_STR(""),
+													const String& vendor_filter = FRL_STR("") );
 }; // class ServerConnection
 
 typedef boost::shared_ptr< ServerConnection > ServerConnectionPtr;
