@@ -7,10 +7,55 @@
 
 namespace frl { namespace opc { namespace impl {
 
+/*! Dtor */
 OPCItemProperties::~OPCItemProperties()
 {
 }
 
+/*!
+	Return a list of ID codes and descriptions for the available properties for this ITEMID. 
+	This list may differ for different ItemIDs. This list is expected to be relatively stable for a particular ItemID. 
+	That is, it could be affected from time to time by changes to the underlying system's configuration. 
+
+	\param[in] szItemID
+		The ItemID for which the caller wants to know the available properties.
+
+	\param[out] pdwCount
+		The number of properties returned.
+
+	\param[out] ppPropertyIDs
+		DWORD IDs for the returned properties. 
+		These IDs can be passed to GetItemProperties or LookupItemIDs
+
+	\param[out] ppDescriptions
+		A brief vendor supplied text description of each property. 
+		NOTE LocaleID does not apply to Descriptions. They are from the tables above.
+
+	\param[out] ppvtDataTypes
+		The data type which will be returned for this property by GetItemProperties.
+
+	\retval S_OK
+		The function was successful.
+
+	\retval OPC_E_UNKNOWNITEMID
+		The ItemID is not in the server address space.
+
+	\retval OPC_E_INVALIDITEMID
+		The ItemID is not syntactically valid.
+
+	\retval E_OUTOFMEMORY
+		Not enough Memory.
+
+	\retval E_INVALIDARG
+		An invalid argument was passed.
+
+	\retval E_FAIL
+		The function failed.
+
+	\section OPCItemProperties_QueryAvailableProperties_Comment Comment
+		The ItemID is passed to this function because servers 
+		are allowed to return different sets of properties for different ItemIDs.
+*/
 STDMETHODIMP OPCItemProperties::QueryAvailableProperties(
 	/* [in] */ LPWSTR szItemID,
 	/* [out] */ DWORD *pdwCount,
@@ -86,6 +131,72 @@ STDMETHODIMP OPCItemProperties::QueryAvailableProperties(
 	return S_OK;
 }
 
+/*!
+	Return a list of the current data values for the passed ID codes.
+
+	\param[in] szItemID
+		The ItemID for which the caller wants to read the list of properties.
+
+	\param[in] dwCount
+		The number of properties passed
+
+	\param[in] pdwPropertyIDs
+		DWORD IDs for the requested properties. 
+		These IDs were returned by QueryAvailableProperties 
+		or obtained from the fixed list described earlier.
+
+	\param[out] ppvData
+		An array of count VARIANTS returned by the server 
+		which contain the current values of the requested properties.
+
+	\param[out] ppErrors
+		Error array indicating whether each property was returned.
+
+	\retval S_OK
+		The function was successful.
+
+	\retval S_FALSE
+		The operation completed with one or more errors. 
+		Refer to individual error returns for failure analysis 
+		(see \ref OPCItemProperties_GetItemProperties_ppErrors).
+
+	\retval OPC_E_UNKNOWNITEMID
+		The ItemID is not in the server address space.
+
+	\retval OPC_E_INVALIDITEMID
+		The ItemID is not syntactically valid.
+
+	\retval E_OUTOFMEMORY
+		Not enough Memory.
+
+	\retval E_INVALIDARG
+		An invalid argument was passed.
+
+	\retval E_FAIL
+		The function failed.
+
+	\section OPCItemProperties_GetItemProperties_ppErrors ppErrors codes
+		\arg \b S_OK - 
+			The corresponding PropertyID was read.
+		\arg \b OPC_E_INVALID_PID - 
+			The passed Property ID is not defined for this item.
+		\arg \b E_xxx - 
+			The passed Property ID could not be read. 
+			The server can return a server specific error code to provide 
+			a detailed explanation as to why this property could not be read. 
+			This error code can be passed to GetErrorMessage(). 
+			In general this will be the same set of errors as is returned by the OPC Read function.
+
+	\section OPCItemProperties_GetItemProperies_Comments Comments
+		\arg
+			The caller must Free the returned Variants and Errors array. 
+			The client must first do a VariantClear() on each of the returned Variants.
+		\arg
+			Clients should not use this interface to obtain large amounts of data. 
+			Clearly each server vendor will provide the best performance possible however as 
+			a practical matter it is expected that the design of this interface will 
+			make it difficult for the server to optimize performance. See LookupItemIDs.
+*/
 STDMETHODIMP OPCItemProperties::GetItemProperties(
 	/* [in] */ LPWSTR szItemID,
 	/* [in] */ DWORD dwCount,
@@ -138,6 +249,66 @@ STDMETHODIMP OPCItemProperties::GetItemProperties(
 	return res;
 }
 
+/*!
+	Return a list of ITEMIDs (if available) for each of the passed ID codes. 
+	These indicate the ITEMID which could be added to an OPCGroup 
+	and used for more efficient access to the data corresponding to the Item Properties.
+
+	\param[in] szItemID
+		The ItemID for which the caller wants to lookup the list of properties
+
+	\param[in] dwCount
+		The number of properties passed
+
+	\param[in] pdwPropertyIDs
+		DWORDIDs for the requested properties. 
+		These IDs were returned by QueryAvailableProperties
+
+	\param[out] ppszNewItemIDs
+		The returned list of ItemIDs.
+
+	\param[out] ppErrors
+		Error array indicating whether each New ItemID was returned.
+
+	\retval S_OK
+		The function was successful.
+
+	\retval S_FALSE
+		The operation completed with one or more errors. 
+		Refer to individual error returns for failure analysis 
+		( see \ref OPCItemProperties_LookupItemIDs_ppErrors ).
+
+	\retval OPC_E_UNKNOWNITEMID
+		The ItemID is not in the server address space.
+
+	\retval OPC_E_INVALIDITEMID
+		The ItemID is not syntactically valid.
+
+	\retval E_OUTOFMEMORY
+		Not enough Memory.
+
+	\retval E_INVALIDARG
+		An invalid argument was passed.
+
+	\retval E_FAIL
+		The function was not successful.
+
+	\section OPCItemProperties_LookupItemIDs_ppErrors ppErrors codes
+		\arg \b S_OK
+			The corresponding Property ID was translated into an ItemID.
+		\arg \b OPC_E_INVALID_PID
+			The passed Property ID is not defined for this item.
+		\arg \b E_FAIL
+			The passed Property ID could not be translated into an ItemID.
+
+	\section OPCItemProperties_LookupItemIDs_Comments Comments
+		\arg
+			It is expected and recommended that servers will allow most or all item properties to be translated into specific ItemIDs.
+		\arg
+			The caller must Free the returned NewItemIDs and Errors array.
+
+
+*/
 STDMETHODIMP OPCItemProperties::LookupItemIDs(
 	/* [in] */ LPWSTR szItemID,
 	/* [in] */ DWORD dwCount,
