@@ -7,7 +7,11 @@
 
 namespace frl { namespace opc { namespace impl {
 
-// IOPCBrowse implementation
+/*!
+	\class BrowseImpl
+	\brief IOPCBrowse implementation.
+	\details IOPCBrowse interface provides improved methods for browsing the server address space and for obtaining the item properties.
+*/
 class BrowseImpl
 	:	public IOPCBrowse,
 		virtual public opc::OPCServerBase
