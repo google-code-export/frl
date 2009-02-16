@@ -10,33 +10,33 @@
 
 BOOST_AUTO_TEST_SUITE( opc_client )
 
-BOOST_AUTO_TEST_CASE( server_browser_get_server_list_force )
+BOOST_AUTO_TEST_CASE( server_browser_get_local_registry_available_servers )
 {
-	std::vector<frl::String> list_all;
-	BOOST_CHECK_NO_THROW( frl::opc::da::client::ServerBrowser::getAllServerListForce( list_all ) );
+	std::vector<frl::opc::da::client::ServerInfo> list_all;
+	BOOST_CHECK_NO_THROW( list_all = frl::opc::da::client::ServerBrowser::getLocalRegistryAvailableServers() );
 }
 
-BOOST_AUTO_TEST_CASE( server_browser_get_server_list_da1 )
+BOOST_AUTO_TEST_CASE( server_browser_get_local_available_servers_da1 )
 {
-	std::vector<frl::String> list_all;
 	CoInitialize( NULL );
-	BOOST_CHECK_NO_THROW( frl::opc::da::client::ServerBrowser::getServerListDA1( list_all ) );
+	std::vector<frl::opc::da::client::ServerInfo> list_all;
+	BOOST_CHECK_NO_THROW( list_all = frl::opc::da::client::ServerBrowser::getLocalAvailableServersDA1() );
 	CoUninitialize();
 }
 
-BOOST_AUTO_TEST_CASE( server_browser_get_server_list_da2 )
+BOOST_AUTO_TEST_CASE( server_browser_get_local_available_servers_da2 )
 {
 	CoInitialize( NULL );
-	std::vector<frl::String> list_all;
-	BOOST_CHECK_NO_THROW( frl::opc::da::client::ServerBrowser::getServerListDA2( list_all ) );
+	std::vector<frl::opc::da::client::ServerInfo> list_all; 
+	BOOST_CHECK_NO_THROW( list_all = frl::opc::da::client::ServerBrowser::getLocalAvailableServersDA2() );
 	CoUninitialize();
 }
 
-BOOST_AUTO_TEST_CASE( server_browser_get_server_list_da3 )
+BOOST_AUTO_TEST_CASE( server_browser_get_local_available_servers_da3 )
 {
 	CoInitialize( NULL );
-	std::vector<frl::String> list_all;
-	BOOST_CHECK_NO_THROW(frl::opc::da::client::ServerBrowser::getServerListDA3( list_all ) );
+	std::vector<frl::opc::da::client::ServerInfo> list_all;
+	BOOST_CHECK_NO_THROW( list_all = frl::opc::da::client::ServerBrowser::getLocalAvailableServersDA3() );
 	CoUninitialize();
 }
 

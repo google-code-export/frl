@@ -9,15 +9,21 @@
 
 namespace frl{ namespace opc{ namespace da{ namespace client{
 
+struct ServerInfo
+{
+	String prog_id;
+	String clsid_str;
+};
+
 class ServerBrowser
 {
 private:
-	static void getServerList( const CATID &interface_, std::vector<String> &to_list );
+	static std::vector<ServerInfo> getLocalAvailableServers( const CATID &interface_ );
 public:
-	static void getAllServerListForce( std::vector<String> &to_list );
-	static void getServerListDA1( std::vector<String> &to_list );
-	static void getServerListDA2( std::vector<String> &to_list );
-	static void getServerListDA3( std::vector<String> &to_list );
+	static std::vector<ServerInfo> getLocalRegistryAvailableServers();
+	static std::vector<ServerInfo> getLocalAvailableServersDA1();
+	static std::vector<ServerInfo> getLocalAvailableServersDA2();
+	static std::vector<ServerInfo> getLocalAvailableServersDA3();
 }; // class ServerBrowser
 
 } // namespace client
