@@ -18,7 +18,6 @@ public:
 	static void getServerListDA1( std::vector<String> &to_list );
 	static void getServerListDA2( std::vector<String> &to_list );
 	static void getServerListDA3( std::vector<String> &to_list );
-	static void getAllServerList( std::vector<String> &to_list );
 }; // class ServerBrowser
 
 } // namespace client
