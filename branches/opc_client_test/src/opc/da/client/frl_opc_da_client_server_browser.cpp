@@ -3,10 +3,12 @@
 #include "../dependency/vendors/opc_foundation/opcda.h"
 #include "frl_smart_ptr.h"
 #include "os/win32/frl_os_win32_exception.h"
+#include "frl_lexical_cast.h"
+#include "os/win32/registry/frl_registry_Key.h"
 
 namespace frl{ namespace opc{ namespace da{ namespace client {
 
-void ServerBrowser::getAllServerListForce( std::vector<String> &to_list )
+std::vector<ServerInfo> ServerBrowser::getLocalRegistryAvailableServers()
 {
 	static size_t max_key_size = 256;
 	std::vector< Char > szKey( max_key_size );
@@ -16,20 +18,32 @@ void ServerBrowser::getAllServerListForce( std::vector<String> &to_list )
 	std::vector<Char> szDummy( 256 );
 	LONG param_size;
 	DWORD index = 0;
+	std::vector<ServerInfo> to_list;
 	while( ::RegEnumKey(hk, index, &szKey[0], max_key_size) == ERROR_SUCCESS )
 	{
 		if(::RegOpenKey(hk, &szKey[0], &hProgID) == ERROR_SUCCESS)
 		{
 			param_size = max_key_size;
 			if(::RegQueryValue(hProgID, FRL_STR("OPC"), &szDummy[0], &param_size) == ERROR_SUCCESS)
-				to_list.push_back( &szKey[0] );
+			{
+				ServerInfo tmp;
+				tmp.prog_id = &szKey[0];
+				param_size = max_key_size;
+				if(::RegQueryValue(hProgID, FRL_STR("CLSID"), &szDummy[0], &param_size) == ERROR_SUCCESS)
+				{
+					os::win32::registry::Key tmp_key( tmp.prog_id + FRL_STR("\\CLSID"), os::win32::registry::RootKeys::classesRoot );
+					tmp.clsid_str = tmp_key.getStringValue();
+				}
+				to_list.push_back( tmp );
+			}
 			::RegCloseKey(hProgID);
 		}
 		++index;
 	}
+	return to_list;
 }
 
-void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> &to_list )
+std::vector<ServerInfo> ServerBrowser::getLocalAvailableServers( const CATID &interface_ )
 {
 	FRL_EXCEPT_GUARD();
 	frl::ComPtr< ICatInformation > cat_info;
@@ -44,37 +58,39 @@ void ServerBrowser::getServerList( const CATID &interface_, std::vector<String> 
 
 	GUID glist;
 	ULONG actual;
+	std::vector<ServerInfo> to_list;
 	while( (result = enum_clsid->Next( 1, &glist, &actual) ) == S_OK)
 	{
-		WCHAR *progID;
-		HRESULT res = ProgIDFromCLSID( glist, &progID );
-		if(FAILED(res))
-		{
-			FRL_THROW_SYSAPI_CODE( res );
-		}
-		else 
-		{
-			to_list.push_back( similarCompatibility( progID ) );
-		}
+		ServerInfo tmp;
+		WCHAR* prog_id = NULL ;
+		HRESULT result = ProgIDFromCLSID( glist, &prog_id );
+		if( FAILED( result ) )
+			FRL_THROW_SYSAPI_CODE_EX( FRL_STR("Can`t convert GUID to ProgID"), result );
+		tmp.prog_id = similarCompatibility( prog_id );
+		CoTaskMemFree( prog_id );
+
+		tmp.clsid_str = lexicalCast<GUID, String>( glist );
+		to_list.push_back( tmp );
 	}
+	return to_list;
 }
 
-void ServerBrowser::getServerListDA1( std::vector<String> &to_list )
+std::vector<ServerInfo> ServerBrowser::getLocalAvailableServersDA1()
 {
 	FRL_EXCEPT_GUARD();
-	getServerList( CATID_OPCDAServer10, to_list );
+	return getLocalAvailableServers( CATID_OPCDAServer10 );
 }
 
-void ServerBrowser::getServerListDA2( std::vector<String> &to_list )
+std::vector<ServerInfo> ServerBrowser::getLocalAvailableServersDA2()
 {
 	FRL_EXCEPT_GUARD();
-	getServerList( CATID_OPCDAServer20, to_list );
+	return getLocalAvailableServers( CATID_OPCDAServer20 );
 }
 
-void ServerBrowser::getServerListDA3( std::vector<String> &to_list )
+std::vector<ServerInfo> ServerBrowser::getLocalAvailableServersDA3()
 {
 	FRL_EXCEPT_GUARD();
-	getServerList( CATID_OPCDAServer30, to_list );
+	return getLocalAvailableServers( CATID_OPCDAServer30 );
 }
 
 } // namespace client
