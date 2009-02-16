@@ -77,14 +77,6 @@ void ServerBrowser::getServerListDA3( std::vector<String> &to_list )
 	getServerList( CATID_OPCDAServer30, to_list );
 }
 
-void ServerBrowser::getAllServerList( std::vector<String> &to_list )
-{
-	FRL_EXCEPT_GUARD();
-	getServerListDA1( to_list );
-	getServerListDA2( to_list );
-	getServerListDA3( to_list );
-}
-
 } // namespace client
 } // namespace da
 } // namespace opc
